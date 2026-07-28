@@ -82,7 +82,9 @@ class WorkflowNodes:
         agent = agent_class(self.llm, tools, self.settings)
         context = {
             "repository_name": state["repository_name"],
-            "repository_path": state["repository_path"]
+            "repository_path": state["repository_path"],
+            "analysis_result_json": state.get("analysis_result_json", "{}"),
+            "investigation_strategy": plan.strategy if plan else "Standard Investigation"
         }
         
         report = agent.run(tasks, context)
@@ -203,6 +205,16 @@ class WorkflowNodes:
              for review in review_report.reviews:
                   if review.verdict == ReviewVerdict.APPROVED:
                        approved_findings[review.agent_type].append(review.original_finding)
+                        
+        # Fallback if no findings were approved (common with strict models)
+        if not any(approved_findings.values()):
+             logger.warning("No findings were approved by the reviewer. Falling back to all raw findings.")
+             for key in ["architecture_report", "execution_flow_report", "api_data_report", "setup_report"]:
+                  report_json = state.get(key)
+                  if report_json:
+                       report = AgentReport(**json.loads(report_json))
+                       if report.findings:
+                            approved_findings[report.agent_type].extend(report.findings)
                        
         analysis_result_json = state.get("analysis_result_json")
         analysis_result = None

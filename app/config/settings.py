@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     # --- Phase 2 Additions ---
     # LLM Provider
     llm_provider: str = "ollama"
-    ollama_model: str = "qwen2.5:7b"
+    ollama_model: str = "phi4-mini"
     ollama_base_url: str = "http://127.0.0.1:11434"
     temperature: float = 0
     max_tokens: int = 4096

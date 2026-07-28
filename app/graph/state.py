@@ -29,7 +29,7 @@ class InvestigationState(TypedDict):
 
     # Phase 3: Reviewer
     review_report: str                       # Serialised ReviewReport
-    revision_requests: Annotated[List[str], operator.add]  # List of serialised RevisionRequests
+    revision_requests: List[str]             # List of serialised RevisionRequests
 
     # Phase 3: Synthesizer
     onboarding_guide: str                    # Serialised OnboardingGuide
