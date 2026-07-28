@@ -98,3 +98,12 @@ class InvestigationResult(BaseModel):
     duration_seconds: float
 
     model_config = ConfigDict(frozen=True)
+
+class TaskAssignment(BaseModel):
+    task_id: str = Field(description="Unique task ID")
+    agent_type: str = Field(description="ARCHITECTURE | EXECUTION_FLOW | API_DATA | SETUP")
+    description: str = Field(description="Specific instruction for the agent")
+
+class SupervisorPlanOutput(BaseModel):
+    strategy: str = Field(description="Brief explanation of the overall investigation strategy")
+    tasks: List[TaskAssignment] = Field(description="List of tasks assigned to specialist agents")

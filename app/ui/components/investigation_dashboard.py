@@ -66,15 +66,20 @@ def render_investigation_dashboard(analysis_result: AnalysisResult):
                     with timeline_placeholder.container():
                         render_timeline(timeline_events)
                         
+                    # Track which agents have completed
+                    completed_agents = set()
+                    for ev in events:
+                        if "completed" in ev.event.lower():
+                            completed_agents.add(ev.agent_type)
+                            
                     # Update status text
                     if events:
                         latest = events[-1]
                         st.write(f"{latest.agent_type.value}: {latest.event}")
                         
-                        # Update cards (we don't have full reports mid-flight in this simple callback,
-                        # but we can highlight the running agent)
+                        # Update cards
                         with cards_placeholder.container():
-                            render_agent_cards({}, current_running=latest.agent_type)
+                            render_agent_cards({}, current_running=latest.agent_type, completed_agents=completed_agents)
                 
                 # Run the investigation blocking
                 # The callback will be called synchronously during the run

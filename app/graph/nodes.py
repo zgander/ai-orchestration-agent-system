@@ -2,7 +2,7 @@ import json
 from datetime import datetime, timezone
 
 from app.graph.state import InvestigationState
-from app.models.investigation_models import InvestigationPlan, AgentType, TimelineEvent
+from app.models.investigation_models import InvestigationPlan, AgentType, AgentStatus, AgentReport, TimelineEvent
 from app.agents.supervisor_agent import SupervisorAgent
 from app.agents.architecture_agent import ArchitectureAgent
 from app.agents.execution_flow_agent import ExecutionFlowAgent
@@ -11,6 +11,9 @@ from app.agents.setup_agent import SetupAgent
 from app.tools.repository_tools import get_repository_tree, read_file, search_files, list_directory
 from app.tools.analysis_tools import get_tech_stack, get_dependency_graph, get_entry_points, get_api_endpoints, get_environment_variables, search_symbols, get_file_dependencies
 from app.tools.tool_context import set_root_path
+from app.utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 class WorkflowNodes:
     def __init__(self, llm, settings):
@@ -48,7 +51,28 @@ class WorkflowNodes:
         
         tasks = [t for t in plan.tasks if t.agent_type == agent_type] if plan else []
         if not tasks:
-            return {}
+            logger.info(f"{agent_type.value} has no assigned tasks. Skipping.")
+            event = TimelineEvent(
+                timestamp=datetime.now(timezone.utc),
+                agent_type=agent_type,
+                event=f"{agent_type.value} skipped (no tasks assigned)"
+            )
+            report = AgentReport(
+                agent_type=agent_type,
+                status=AgentStatus.COMPLETED,
+                tasks=[],
+                findings=[],
+                tool_calls=[],
+                reasoning_steps=[],
+                started_at=datetime.now(timezone.utc),
+                completed_at=datetime.now(timezone.utc),
+                error=None
+            )
+            report_key = f"{agent_type.value.lower()}_report"
+            return {
+                report_key: report.model_dump_json(),
+                "timeline_events": [event.model_dump_json()]
+            }
             
         agent = agent_class(self.llm, tools, self.settings)
         context = {

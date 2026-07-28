@@ -3,8 +3,9 @@ import uuid
 from datetime import datetime, timezone
 
 from langchain_core.messages import SystemMessage, HumanMessage
+from langchain_core.prompts import ChatPromptTemplate
 
-from app.models.investigation_models import InvestigationPlan, InvestigationTask, AgentType, AgentStatus
+from app.models.investigation_models import InvestigationPlan, InvestigationTask, AgentType, AgentStatus, SupervisorPlanOutput
 from app.agents.prompts.supervisor_prompt import SUPERVISOR_SYSTEM_PROMPT, build_supervisor_prompt
 from app.utils.logger import get_logger
 
@@ -20,53 +21,72 @@ class SupervisorAgent:
         system_prompt = SUPERVISOR_SYSTEM_PROMPT
         user_prompt = build_supervisor_prompt(analysis_result_json, user_role, user_question)
         
-        messages = [
-            SystemMessage(content=system_prompt),
-            HumanMessage(content=user_prompt)
-        ]
-        
-        response = self.llm.invoke(messages)
-        
-        content = response.content
-        import re
-        json_match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', content, re.DOTALL)
-        if json_match:
-            content = json_match.group(1)
-        else:
-            start = content.find('{')
-            end = content.rfind('}')
-            if start != -1 and end != -1:
-                content = content[start:end+1]
-                
         try:
-            data = json.loads(content)
+            logger.info(f"Extracting structured JSON for Supervisor plan...")
+            structured_llm = self.llm.with_structured_output(SupervisorPlanOutput)
+            extraction_prompt = ChatPromptTemplate.from_messages([
+                SystemMessage(content=SUPERVISOR_SYSTEM_PROMPT),
+                ("human", "{text}")
+            ])
+            extractor = extraction_prompt | structured_llm
+            
+            data = extractor.invoke({"text": user_prompt})
+            
+            # Normalize common LLM agent_type variations to exact enum values
+            AGENT_TYPE_ALIASES = {
+                "ARCHITECTURE": AgentType.ARCHITECTURE,
+                "ARCH": AgentType.ARCHITECTURE,
+                "EXECUTION_FLOW": AgentType.EXECUTION_FLOW,
+                "EXECUTION": AgentType.EXECUTION_FLOW,
+                "EXEC": AgentType.EXECUTION_FLOW,
+                "API_DATA": AgentType.API_DATA,
+                "API": AgentType.API_DATA,
+                "API_AND_DATA": AgentType.API_DATA,
+                "DATA": AgentType.API_DATA,
+                "SETUP": AgentType.SETUP,
+                "SETUP_ENVIRONMENT": AgentType.SETUP,
+                "SETUP_ENV": AgentType.SETUP,
+                "ENVIRONMENT": AgentType.SETUP,
+            }
             
             tasks = []
-            for t in data.get("tasks", []):
-                agent_type_str = t.get("agent_type")
-                try:
-                    agent_type = AgentType(agent_type_str)
-                except ValueError:
-                    logger.warning(f"Supervisor returned unknown agent type: {agent_type_str}. Defaulting to ARCHITECTURE.")
-                    agent_type = AgentType.ARCHITECTURE
-                    
-                tasks.append(InvestigationTask(
-                    task_id=t.get("task_id", str(uuid.uuid4())),
-                    agent_type=agent_type,
-                    description=t.get("description", ""),
-                    status=AgentStatus.IDLE,
-                    created_at=datetime.now(timezone.utc)
-                ))
+            if data and data.tasks:
+                for t in data.tasks:
+                    normalized_key = t.agent_type.strip().upper().replace(" ", "_").replace("&", "AND")
+                    agent_type = AGENT_TYPE_ALIASES.get(normalized_key)
+                    if not agent_type:
+                        logger.warning(f"Supervisor returned unknown agent type: '{t.agent_type}' (normalized: '{normalized_key}'). Skipping task.")
+                        continue
+                        
+                    tasks.append(InvestigationTask(
+                        task_id=t.task_id if t.task_id else str(uuid.uuid4()),
+                        agent_type=agent_type,
+                        description=t.description,
+                        status=AgentStatus.IDLE,
+                        created_at=datetime.now(timezone.utc)
+                    ))
+            
+            # Guarantee every agent type gets at least one task
+            assigned_types = {t.agent_type for t in tasks}
+            for atype in [AgentType.ARCHITECTURE, AgentType.EXECUTION_FLOW, AgentType.API_DATA, AgentType.SETUP]:
+                if atype not in assigned_types:
+                    logger.info(f"Supervisor did not assign tasks for {atype.value}. Adding default task.")
+                    tasks.append(InvestigationTask(
+                        task_id=str(uuid.uuid4()),
+                        agent_type=atype,
+                        description=f"Investigate all {atype.value} aspects of the repository.",
+                        status=AgentStatus.IDLE,
+                        created_at=datetime.now(timezone.utc)
+                    ))
                 
             return InvestigationPlan(
                 repository_name=repository_name,
                 tasks=tasks,
-                strategy=data.get("strategy", "Standard Investigation"),
+                strategy=data.strategy if data else "Standard Investigation",
                 created_at=datetime.now(timezone.utc)
             )
         except Exception as e:
-            logger.error(f"Supervisor failed to parse JSON: {e}")
-            logger.error(f"Supervisor output: {content}")
+            logger.error(f"Supervisor failed to parse structured output: {e}")
             
             # Fallback
             fallback_tasks = []
