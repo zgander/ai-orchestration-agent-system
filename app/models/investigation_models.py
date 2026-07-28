@@ -29,20 +29,25 @@ class ToolResult(BaseModel):
     model_config = ConfigDict(frozen=True)
 
 class Evidence(BaseModel):
-    source_tool: str
-    file_path: Optional[str] = None
-    content: str
-    relevance: str
+    source_tool: str = Field(description="Name of the tool used (e.g., read_file)")
+    file_path: Optional[str] = Field(None, description="File path if applicable")
+    content: str = Field(description="Snippet or summary of the evidence")
+    relevance: str = Field(description="Why this proves the finding")
 
     model_config = ConfigDict(frozen=True)
 
 class AgentFinding(BaseModel):
-    title: str
-    description: str
-    evidence: List[Evidence] = Field(default_factory=list)
-    confidence: float
-    category: str
+    title: str = Field(description="Short title of the finding")
+    description: str = Field(description="Detailed explanation of the finding")
+    evidence: List[Evidence] = Field(default_factory=list, description="Evidence supporting the finding")
+    confidence: float = Field(description="Confidence score between 0.0 and 1.0")
+    category: str = Field(description="Category of the finding")
 
+    model_config = ConfigDict(frozen=True)
+
+class FindingsOutput(BaseModel):
+    findings: List[AgentFinding] = Field(description="List of all findings extracted from the text")
+    
     model_config = ConfigDict(frozen=True)
 
 class InvestigationTask(BaseModel):

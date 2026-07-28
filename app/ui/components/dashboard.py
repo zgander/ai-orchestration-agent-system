@@ -18,7 +18,7 @@ def render_dashboard(result: AnalysisResult):
     with col1:
         st.write("Analysis complete. You can explore the raw data below, or start the AI Investigation Engine to get a high-level architectural overview.")
     with col2:
-        if st.button("🤖 Start AI Investigation", use_container_width=True, type="primary"):
+        if st.button("🤖 Start AI Investigation", type="primary"):
             st.session_state.app_state = "investigation"
             st.rerun()
             
@@ -72,7 +72,7 @@ def render_dashboard(result: AnalysisResult):
                     "Line": ep.line_number,
                     "Description": ep.description
                 })
-            st.dataframe(pd.DataFrame(ep_data), hide_index=True, use_container_width=True)
+            st.dataframe(pd.DataFrame(ep_data), hide_index=True)
         else:
             st.info("No entry points confidently detected.")
             
@@ -89,7 +89,7 @@ def render_dashboard(result: AnalysisResult):
                     "Found In": f"{env.file_path}:{env.line_number}",
                     "Access Method": env.access_method
                 })
-            st.dataframe(pd.DataFrame(env_data), hide_index=True, use_container_width=True)
+            st.dataframe(pd.DataFrame(env_data), hide_index=True)
         else:
             st.info("No environment variables detected.")
             

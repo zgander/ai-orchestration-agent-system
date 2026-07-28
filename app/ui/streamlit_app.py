@@ -13,6 +13,7 @@ from app.ui.components.landing import render_landing
 from app.ui.components.dashboard import render_dashboard
 from app.ui.components.investigation_dashboard import render_investigation_dashboard
 from app.utils.logger import get_logger
+from app.tools.repository_tools import clear_tool_cache
 
 logger = get_logger(__name__)
 
@@ -54,18 +55,17 @@ def main():
                 
             st.markdown("---")
             st.markdown("## Navigation")
-            if st.button("📊 Raw Analysis", use_container_width=True, 
-                         type="primary" if st.session_state.app_state == "dashboard" else "secondary"):
+            if st.button("📊 Raw Analysis", type="primary" if st.session_state.app_state == "dashboard" else "secondary"):
                 st.session_state.app_state = "dashboard"
                 st.rerun()
                 
-            if st.button("🤖 AI Investigation", use_container_width=True,
-                         type="primary" if st.session_state.app_state == "investigation" else "secondary"):
+            if st.button("🤖 AI Investigation", type="primary" if st.session_state.app_state == "investigation" else "secondary"):
                 st.session_state.app_state = "investigation"
                 st.rerun()
                 
             st.divider()
-            if st.button("← Load New Repository", use_container_width=True):
+            if st.button("← Load New Repository"):
+                clear_tool_cache()
                 # Cleanup temp dir if exists
                 if 'temp_dir' in st.session_state:
                     repo_service.cleanup(st.session_state['temp_dir'])

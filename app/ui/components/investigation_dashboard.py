@@ -10,6 +10,7 @@ from app.config.settings import Settings
 from app.ui.components.agent_cards import render_agent_cards
 from app.ui.components.timeline_view import render_timeline
 from app.ui.components.findings_view import render_findings
+from app.tools.repository_tools import clear_tool_cache
 
 def render_investigation_dashboard(analysis_result: AnalysisResult):
     st.title(f"🤖 AI Investigation: {analysis_result.repository_info.name}")
@@ -29,6 +30,7 @@ def render_investigation_dashboard(analysis_result: AnalysisResult):
             render_findings(result.agent_reports)
             
         if st.button("🔄 Rerun Investigation"):
+            clear_tool_cache()
             del st.session_state.investigation_result
             st.rerun()
             

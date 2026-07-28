@@ -170,11 +170,8 @@ def get_file_dependencies(file_path: str) -> str:
     file_path should be relative to the repository root.
     """
     root_path = get_root_path()
-    # Force evaluation of dependency graph if not in cache
-    get_dependency_graph(root_path)
     
-    # Wait, get_dependency_graph returns a summary. I need the full graph model.
-    # Let's rebuild or use a hidden cache for the full model.
+    # Build or use hidden cache for the full dependency graph model
     full_graph_cache_key = ("dependency_graph_full", root_path)
     if full_graph_cache_key not in _TOOL_CACHE:
         builder = DependencyGraph(Settings())

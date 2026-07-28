@@ -4,7 +4,6 @@ from typing import Optional, Callable
 import time
 
 from langchain_core.language_models.chat_models import BaseChatModel
-from langchain_openai import ChatOpenAI
 
 from app.models.analysis_models import AnalysisResult
 from app.models.investigation_models import InvestigationResult, InvestigationPlan, AgentReport, TimelineEvent
