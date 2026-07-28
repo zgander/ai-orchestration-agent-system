@@ -18,6 +18,11 @@ def build_investigation_workflow(llm: BaseChatModel, settings: Settings):
     workflow.add_node("setup_node", nodes.setup_node)
     workflow.add_node("merge_results_node", nodes.merge_results_node)
     
+    # Phase 3 nodes
+    workflow.add_node("reviewer_node", nodes.reviewer_node)
+    workflow.add_node("revision_node", nodes.revision_node)
+    workflow.add_node("synthesizer_node", nodes.synthesizer_node)
+    
     # Add edges
     workflow.add_edge(START, "supervisor_node")
     
@@ -41,6 +46,21 @@ def build_investigation_workflow(llm: BaseChatModel, settings: Settings):
         workflow.add_edge("api_data_node", "setup_node")
         workflow.add_edge("setup_node", "merge_results_node")
         
-    workflow.add_edge("merge_results_node", END)
+    # Phase 3 edges
+    workflow.add_edge("merge_results_node", "reviewer_node")
+    
+    def _should_revise(state: InvestigationState) -> str:
+        requests = state.get("revision_requests", [])
+        if requests:
+            return "revision_node"
+        return "synthesizer_node"
+        
+    workflow.add_conditional_edges(
+        "reviewer_node",
+        _should_revise,
+        {"revision_node": "revision_node", "synthesizer_node": "synthesizer_node"}
+    )
+    workflow.add_edge("revision_node", "synthesizer_node")
+    workflow.add_edge("synthesizer_node", END)
     
     return workflow.compile()

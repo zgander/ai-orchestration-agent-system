@@ -29,6 +29,10 @@ def render_investigation_dashboard(analysis_result: AnalysisResult):
         with col2:
             render_findings(result.agent_reports)
             
+        if st.button("📘 View Onboarding Guide", type="primary"):
+            st.session_state.app_state = "onboarding"
+            st.rerun()
+
         if st.button("🔄 Rerun Investigation"):
             clear_tool_cache()
             del st.session_state.investigation_result
@@ -92,8 +96,13 @@ def render_investigation_dashboard(analysis_result: AnalysisResult):
                 
                 status.update(label="Investigation Complete", state="complete", expanded=False)
                 
-            # Save to session state and rerun to show final static view
+            # Save to session state
             st.session_state.investigation_result = result
+            
+            # If onboarding guide was generated successfully, navigate to it automatically
+            if result.onboarding_guide:
+                st.session_state.app_state = "onboarding"
+                
             st.rerun()
             
         except Exception as e:

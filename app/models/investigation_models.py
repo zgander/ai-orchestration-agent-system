@@ -9,6 +9,8 @@ class AgentType(str, Enum):
     EXECUTION_FLOW = "EXECUTION_FLOW"
     API_DATA = "API_DATA"
     SETUP = "SETUP"
+    REVIEWER = "REVIEWER"
+    SYNTHESIZER = "SYNTHESIZER"
 
 class AgentStatus(str, Enum):
     IDLE = "IDLE"
@@ -16,6 +18,8 @@ class AgentStatus(str, Enum):
     RUNNING = "RUNNING"
     REASONING = "REASONING"
     ACTING = "ACTING"
+    REVIEWING = "REVIEWING"
+    REVISING = "REVISING"
     COMPLETED = "COMPLETED"
     FAILED = "FAILED"
 
@@ -31,6 +35,8 @@ class ToolResult(BaseModel):
 class Evidence(BaseModel):
     source_tool: str = Field(description="Name of the tool used (e.g., read_file)")
     file_path: Optional[str] = Field(None, description="File path if applicable")
+    line_numbers: Optional[str] = Field(None, description="Line numbers if applicable")
+    symbol: Optional[str] = Field(None, description="Symbol name if applicable")
     content: str = Field(description="Snippet or summary of the evidence")
     relevance: str = Field(description="Why this proves the finding")
 
@@ -42,6 +48,8 @@ class AgentFinding(BaseModel):
     evidence: List[Evidence] = Field(default_factory=list, description="Evidence supporting the finding")
     confidence: float = Field(description="Confidence score between 0.0 and 1.0")
     category: str = Field(description="Category of the finding")
+    review_status: Optional[str] = Field(None, description="Verdict from reviewer (e.g., APPROVED, REJECTED, UNCERTAIN)")
+    reviewer_note: Optional[str] = Field(None, description="Reviewer reasoning")
 
     model_config = ConfigDict(frozen=True)
 
@@ -96,6 +104,8 @@ class InvestigationResult(BaseModel):
     started_at: datetime
     completed_at: datetime
     duration_seconds: float
+    review_report: Optional[Any] = None       # Set to Any to avoid circular import, resolves to ReviewReport
+    onboarding_guide: Optional[Any] = None    # Set to Any to avoid circular import, resolves to OnboardingGuide
 
     model_config = ConfigDict(frozen=True)
 

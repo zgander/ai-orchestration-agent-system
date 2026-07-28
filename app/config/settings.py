@@ -35,6 +35,16 @@ class Settings(BaseSettings):
     agent_timeout_seconds: int = 120
     parallel_execution: bool = False
 
+    # --- Phase 3 Additions ---
+    # Reviewer
+    max_reviewer_iterations: int = 1
+    min_confidence_threshold: float = 0.3
+    evidence_required: bool = True
+
+    # Synthesizer
+    enable_mermaid_diagrams: bool = True
+    default_onboarding_role: str = "Full Stack Developer"
+
     model_config = SettingsConfigDict(env_file=".env", env_prefix="REPOLENS_")
 
 settings = Settings()

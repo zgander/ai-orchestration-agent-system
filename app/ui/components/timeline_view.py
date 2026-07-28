@@ -35,13 +35,14 @@ def render_timeline(events: List[TimelineEvent]):
     for event in reversed(events):
         time_str = event.timestamp.strftime("%H:%M:%S")
         
-        # Agent icons
         icon = "🤖"
         if event.agent_type.value == "SUPERVISOR": icon = "👔"
         elif event.agent_type.value == "ARCHITECTURE": icon = "🏗️"
         elif event.agent_type.value == "EXECUTION_FLOW": icon = "🔄"
         elif event.agent_type.value == "API_DATA": icon = "🌐"
         elif event.agent_type.value == "SETUP": icon = "⚙️"
+        elif event.agent_type.value == "REVIEWER": icon = "🔍"
+        elif event.agent_type.value == "SYNTHESIZER": icon = "📘"
         
         detail_html = f'<div class="timeline-detail">{event.detail}</div>' if event.detail else ""
         

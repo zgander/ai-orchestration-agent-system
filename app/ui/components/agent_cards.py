@@ -6,13 +6,15 @@ from app.models.investigation_models import AgentType, AgentReport, AgentStatus
 def render_agent_cards(agent_reports: Dict[AgentType, AgentReport], current_running: Optional[AgentType] = None, completed_agents: Optional[Set[AgentType]] = None):
     if completed_agents is None:
         completed_agents = set()
-    cols = st.columns(4)
+    cols = st.columns(6)
     
     agents = [
         (AgentType.ARCHITECTURE, "🏗️ Arch", cols[0]),
         (AgentType.EXECUTION_FLOW, "🔄 Exec", cols[1]),
         (AgentType.API_DATA, "🌐 API", cols[2]),
-        (AgentType.SETUP, "⚙️ Setup", cols[3])
+        (AgentType.SETUP, "⚙️ Setup", cols[3]),
+        (AgentType.REVIEWER, "🔍 Review", cols[4]),
+        (AgentType.SYNTHESIZER, "📘 Synth", cols[5])
     ]
     
     for agent_type, title, col in agents:
