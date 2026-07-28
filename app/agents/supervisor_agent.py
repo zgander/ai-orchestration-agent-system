@@ -41,9 +41,19 @@ class SupervisorAgent:
             
             tasks = []
             for t in data.get("tasks", []):
-                agent_type_str = t.get("agent_type")
+                agent_type_str = t.get("agent_type", "")
                 try:
-                    agent_type = AgentType(agent_type_str)
+                    clean_str = str(agent_type_str).strip().upper().replace(" ", "_")
+                    if "ARCHITECTURE" in clean_str or "ARCH" in clean_str:
+                        agent_type = AgentType.ARCHITECTURE
+                    elif "EXEC" in clean_str or "FLOW" in clean_str:
+                        agent_type = AgentType.EXECUTION_FLOW
+                    elif "API" in clean_str or "DATA" in clean_str:
+                        agent_type = AgentType.API_DATA
+                    elif "SETUP" in clean_str:
+                        agent_type = AgentType.SETUP
+                    else:
+                        agent_type = AgentType(clean_str)
                 except ValueError:
                     logger.warning(f"Supervisor returned unknown agent type: {agent_type_str}. Defaulting to ARCHITECTURE.")
                     agent_type = AgentType.ARCHITECTURE

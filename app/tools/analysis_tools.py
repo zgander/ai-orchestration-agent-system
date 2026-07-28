@@ -171,7 +171,7 @@ def get_file_dependencies(file_path: str) -> str:
     """
     root_path = get_root_path()
     # Force evaluation of dependency graph if not in cache
-    get_dependency_graph(root_path)
+    # get_dependency_graph(root_path) - removed because it's a tool and not callable directly like this
     
     # Wait, get_dependency_graph returns a summary. I need the full graph model.
     # Let's rebuild or use a hidden cache for the full model.
