@@ -8,6 +8,7 @@ import re
 
 from langchain_classic.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.messages import SystemMessage
 
 from app.models.investigation_models import (
     AgentType, AgentStatus, InvestigationTask, AgentFinding, AgentReport, ToolResult
@@ -45,7 +46,7 @@ class BaseAgent(ABC):
         try:
             # We use tool-calling agent, it's more reliable than pure text ReAct
             prompt = ChatPromptTemplate.from_messages([
-                ("system", self.get_system_prompt()),
+                SystemMessage(content=self.get_system_prompt()),
                 ("human", "{input}"),
                 ("placeholder", "{agent_scratchpad}"),
             ])
@@ -89,6 +90,16 @@ class BaseAgent(ABC):
                 end = final_output.rfind(']')
                 if start != -1 and end != -1:
                     final_output = final_output[start:end+1]
+                else:
+                    logger.warning(f"No JSON array found in output. Raw output: {final_output}")
+                    fallback_finding = [{
+                        "title": "Raw Agent Output",
+                        "description": final_output.strip() if final_output else "Agent returned no output or stopped early due to iteration limits.",
+                        "confidence": 0.0,
+                        "category": "Unparsed",
+                        "evidence": []
+                    }]
+                    final_output = json.dumps(fallback_finding)
                     
             try:
                 parsed_findings = json.loads(final_output)
