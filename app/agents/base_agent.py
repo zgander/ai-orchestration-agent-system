@@ -11,7 +11,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import SystemMessage
 
 from app.models.investigation_models import (
-    AgentType, AgentStatus, InvestigationTask, AgentFinding, AgentReport, ToolResult
+    AgentType, AgentStatus, InvestigationTask, AgentFinding, AgentReport, ToolResult, FindingsOutput
 )
 from app.config.settings import Settings
 from app.utils.logger import get_logger
@@ -81,35 +81,41 @@ class BaseAgent(ABC):
                 ))
                 reasoning_steps.append(f"Used tool {action.tool}")
 
-            # Parse JSON from final output
-            json_match = re.search(r'```(?:json)?\s*(\[\s*\{.*?\}\s*\])\s*```', final_output, re.DOTALL)
-            if json_match:
-                final_output = json_match.group(1)
-            else:
-                start = final_output.find('[')
-                end = final_output.rfind(']')
-                if start != -1 and end != -1:
-                    final_output = final_output[start:end+1]
-                else:
-                    logger.warning(f"No JSON array found in output. Raw output: {final_output}")
-                    fallback_finding = [{
-                        "title": "Raw Agent Output",
-                        "description": final_output.strip() if final_output else "Agent returned no output or stopped early due to iteration limits.",
-                        "confidence": 0.0,
-                        "category": "Unparsed",
-                        "evidence": []
-                    }]
-                    final_output = json.dumps(fallback_finding)
-                    
-            try:
-                parsed_findings = json.loads(final_output)
-                for f in parsed_findings:
-                    findings.append(AgentFinding(**f))
-                status = AgentStatus.COMPLETED
-            except json.JSONDecodeError as e:
-                logger.error(f"Failed to parse JSON output from {self.agent_type.value}: {final_output}")
-                error_msg = f"Failed to parse findings JSON: {e}"
+            if "Agent stopped due to max iterations" in final_output:
+                error_msg = f"Agent stopped due to max iterations ({self.settings.agent_max_iterations}). The LLM model may be stuck in a loop."
+                logger.error(f"{self.agent_type.value} failed: {error_msg}")
                 status = AgentStatus.FAILED
+                parsed_findings = []
+            else:
+                logger.debug(f"[{self.agent_type.value}] RAW LLM OUTPUT:\n{final_output}")
+                
+                try:
+                    logger.info(f"Extracting structured JSON from {self.agent_type.value} output...")
+                    structured_llm = self.llm.with_structured_output(FindingsOutput)
+                    extraction_prompt = ChatPromptTemplate.from_messages([
+                        ("system", "Extract all findings from the provided text into the structured format. If no findings are present, return an empty list."),
+                        ("human", "{text}")
+                    ])
+                    extractor = extraction_prompt | structured_llm
+                    
+                    extracted = extractor.invoke({"text": final_output})
+                    
+                    if extracted and extracted.findings:
+                        for f in extracted.findings:
+                            findings.append(f)
+                    
+                    status = AgentStatus.COMPLETED
+                except Exception as e:
+                    logger.error(f"Failed to extract structured JSON from {self.agent_type.value}. Error: {e}")
+                    fallback = AgentFinding(
+                        title="Agent Output (Extraction Error)",
+                        description=final_output.strip() if final_output else "No output",
+                        confidence=0.0,
+                        category="Unparsed",
+                        evidence=[]
+                    )
+                    findings.append(fallback)
+                    status = AgentStatus.COMPLETED
             
             # Mark tasks completed
             completed_tasks = []

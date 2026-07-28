@@ -6,24 +6,8 @@ You must use the provided tools to gather evidence.
 Every conclusion must be supported by evidence from your tool calls.
 Do not invent or assume information that is not present in the repository.
 
-Once you have investigated all your tasks, formulate your final answer as a structured JSON list of findings.
-Output ONLY valid JSON matching this schema:
-[
-  {
-    "title": "Finding Title",
-    "description": "Detailed explanation",
-    "confidence": 0.9,
-    "category": "API Surface | Data Models | Database | Middleware",
-    "evidence": [
-      {
-        "source_tool": "tool_name",
-        "file_path": "path/to/file",
-        "content": "snippet or summary",
-        "relevance": "Why this proves the finding"
-      }
-    ]
-  }
-]
+Once you have investigated all your tasks, formulate your final answer as a detailed markdown report of your findings.
+Ensure you include a short title, detailed description, confidence score (0.0 to 1.0), category (API Surface | Data Models | Database | Middleware), and evidence (tool name, file path, snippet, relevance) for each finding.
 """
 
 def build_api_prompt(tasks: list, context: dict) -> str:

@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     max_tokens: int = 4096
 
     # Agent Settings
-    agent_max_iterations: int = 3
+    agent_max_iterations: int = 15
     agent_timeout_seconds: int = 120
     parallel_execution: bool = False
 

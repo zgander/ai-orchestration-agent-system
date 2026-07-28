@@ -35,7 +35,7 @@ def render_landing(repo_service: RepositoryService):
         
     st.markdown("---")
     
-    if st.button("🔍 Analyse Repository", use_container_width=True, type="primary"):
+    if st.button("🔍 Analyse Repository", type="primary"):
         if source_mode == "GitHub URL" and not url_input:
             st.error("Please enter a GitHub URL.")
             return
