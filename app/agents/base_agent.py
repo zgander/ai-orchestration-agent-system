@@ -80,25 +80,30 @@ class BaseAgent(ABC):
                 ))
                 reasoning_steps.append(f"Used tool {action.tool}")
 
-            # Parse JSON from final output
-            json_match = re.search(r'```(?:json)?\s*(\[\s*\{.*?\}\s*\])\s*```', final_output, re.DOTALL)
-            if json_match:
-                final_output = json_match.group(1)
-            else:
-                start = final_output.find('[')
-                end = final_output.rfind(']')
-                if start != -1 and end != -1:
-                    final_output = final_output[start:end+1]
-                    
-            try:
-                parsed_findings = json.loads(final_output)
-                for f in parsed_findings:
-                    findings.append(AgentFinding(**f))
-                status = AgentStatus.COMPLETED
-            except json.JSONDecodeError as e:
-                logger.error(f"Failed to parse JSON output from {self.agent_type.value}: {final_output}")
-                error_msg = f"Failed to parse findings JSON: {e}"
+            if "Agent stopped due to max iterations" in final_output:
+                error_msg = f"Agent stopped due to max iterations ({self.settings.agent_max_iterations}). The LLM model may be stuck in a loop."
+                logger.error(f"{self.agent_type.value} failed: {error_msg}")
                 status = AgentStatus.FAILED
+                parsed_findings = []
+            else:
+                # Log the exact raw output before any modifications
+                logger.debug(f"[{self.agent_type.value}] RAW LLM OUTPUT:\n{final_output}")
+
+                from app.utils.json_parser import extract_json_from_llm
+                sanitized_output = extract_json_from_llm(final_output, expected_type='list')
+                logger.debug(f"[{self.agent_type.value}] SANITIZED OUTPUT:\n{sanitized_output}")
+                        
+                try:
+                    if not sanitized_output:
+                        raise ValueError("Sanitized JSON string is empty.")
+                    parsed_findings = json.loads(sanitized_output)
+                    for f in parsed_findings:
+                        findings.append(AgentFinding(**f))
+                    status = AgentStatus.COMPLETED
+                except Exception as e:
+                    logger.error(f"Failed to parse JSON output from {self.agent_type.value}. Error: {e}\nRaw Output: {final_output}\nSanitized: {sanitized_output}")
+                    error_msg = f"Failed to parse findings JSON: {e}"
+                    status = AgentStatus.FAILED
             
             # Mark tasks completed
             completed_tasks = []

@@ -11,20 +11,20 @@ Do not invent or assume information that is not present in the repository.
 Once you have investigated all your tasks, formulate your final answer as a structured JSON list of findings.
 Output ONLY valid JSON matching this schema:
 [
-  {
+  {{
     "title": "Finding Title",
     "description": "Detailed explanation",
     "confidence": 0.9,
     "category": "Architecture Style | Modules | Patterns",
     "evidence": [
-      {
+      {{
         "source_tool": "tool_name",
         "file_path": "path/to/file",
         "content": "snippet or summary",
         "relevance": "Why this proves the finding"
-      }
+      }}
     ]
-  }
+  }}
 ]
 """
 

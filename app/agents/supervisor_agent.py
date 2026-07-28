@@ -28,18 +28,16 @@ class SupervisorAgent:
         response = self.llm.invoke(messages)
         
         content = response.content
-        import re
-        json_match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', content, re.DOTALL)
-        if json_match:
-            content = json_match.group(1)
-        else:
-            start = content.find('{')
-            end = content.rfind('}')
-            if start != -1 and end != -1:
-                content = content[start:end+1]
+        logger.debug(f"[SUPERVISOR] RAW LLM OUTPUT:\n{content}")
+        
+        from app.utils.json_parser import extract_json_from_llm
+        sanitized_output = extract_json_from_llm(content, expected_type='dict')
+        logger.debug(f"[SUPERVISOR] SANITIZED OUTPUT:\n{sanitized_output}")
                 
         try:
-            data = json.loads(content)
+            if not sanitized_output:
+                raise ValueError("Sanitized JSON string is empty.")
+            data = json.loads(sanitized_output)
             
             tasks = []
             for t in data.get("tasks", []):
