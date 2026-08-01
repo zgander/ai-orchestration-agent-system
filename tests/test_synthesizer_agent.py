@@ -52,16 +52,16 @@ def settings():
     return Settings(enable_mermaid_diagrams=True)
 
 @pytest.fixture
-def dummy_analysis_result():
+def dummy_analysis_result(tmp_path):
     return AnalysisResult(
         repository_info=RepositoryInfo(
             name="test-repo",
-            source=RepositorySource(source_type=SourceType.ZIP, local_path="/tmp"),
-            root_path="/tmp",
+            source=RepositorySource(source_type=SourceType.ZIP, local_path=str(tmp_path)),
+            root_path=str(tmp_path),
             cloned_at=datetime.now(timezone.utc),
             size_bytes=100
         ),
-        tree=RepositoryTree(root=FileNode(name="root", path="/", is_dir=True, size=0, depth=0), total_files=0, total_dirs=0, max_depth=0),
+        tree=RepositoryTree(root=FileNode(name="root", path=str(tmp_path), is_dir=True, size=0, depth=0), total_files=0, total_dirs=0, max_depth=0),
         tech_stack=TechStack(items=[]),
         entry_points=[],
         api_endpoints=[],

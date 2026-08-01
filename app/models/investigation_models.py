@@ -1,7 +1,12 @@
+from __future__ import annotations
 from enum import Enum
 from datetime import datetime
-from typing import List, Dict, Optional, Any
+from typing import List, Dict, Optional, Any, TYPE_CHECKING
 from pydantic import BaseModel, ConfigDict, Field
+
+if TYPE_CHECKING:
+    from app.models.review_models import ReviewReport
+    from app.models.onboarding_models import OnboardingGuide
 
 class AgentType(str, Enum):
     SUPERVISOR = "SUPERVISOR"
@@ -104,8 +109,8 @@ class InvestigationResult(BaseModel):
     started_at: datetime
     completed_at: datetime
     duration_seconds: float
-    review_report: Optional[Any] = None       # Set to Any to avoid circular import, resolves to ReviewReport
-    onboarding_guide: Optional[Any] = None    # Set to Any to avoid circular import, resolves to OnboardingGuide
+    review_report: Optional["ReviewReport"] = None
+    onboarding_guide: Optional["OnboardingGuide"] = None
 
     model_config = ConfigDict(frozen=True)
 
