@@ -1,7 +1,8 @@
 from unittest.mock import patch, MagicMock
 from pathlib import Path
+from datetime import datetime, timezone
 from app.services.repository_service import RepositoryService
-from app.models.repository import SourceType
+from app.models.repository import SourceType, RepositoryInfo, RepositorySource
 
 @patch('app.services.github_service.GitHubService.clone')
 def test_repository_service_analyse(mock_clone, sample_repo, mock_settings):
@@ -29,14 +30,15 @@ def test_repository_service_full_flow(sample_repo, mock_settings):
     # We can just test analyse directly
     service = RepositoryService(mock_settings)
     
-    class DummyInfo:
-        name = "test"
-        source = MagicMock()
-        root_path = str(sample_repo)
-        cloned_at = None
-        size_bytes = 100
+    repo_info = RepositoryInfo(
+        name="test",
+        source=RepositorySource(source_type=SourceType.GITHUB, local_path=str(sample_repo)),
+        root_path=str(sample_repo),
+        cloned_at=datetime.now(timezone.utc),
+        size_bytes=100
+    )
         
-    result = service.analyse(DummyInfo())
+    result = service.analyse(repo_info)
     
     assert result.tree.total_files > 0
     assert result.duration_seconds > 0

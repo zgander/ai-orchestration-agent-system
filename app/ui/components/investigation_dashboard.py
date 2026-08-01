@@ -29,6 +29,10 @@ def render_investigation_dashboard(analysis_result: AnalysisResult):
         with col2:
             render_findings(result.agent_reports)
             
+        if st.button("📘 View Onboarding Guide", type="primary"):
+            st.session_state.app_state = "onboarding"
+            st.rerun()
+
         if st.button("🔄 Rerun Investigation"):
             clear_tool_cache()
             del st.session_state.investigation_result
@@ -81,19 +85,27 @@ def render_investigation_dashboard(analysis_result: AnalysisResult):
                         with cards_placeholder.container():
                             render_agent_cards({}, current_running=latest.agent_type, completed_agents=completed_agents)
                 
+                user_role = st.session_state.user_context.role.value if 'user_context' in st.session_state else "Full Stack Developer"
+                user_question = st.session_state.user_context.question if 'user_context' in st.session_state and st.session_state.user_context.question else "Give me a comprehensive overview of the architecture and execution flow."
+                
                 # Run the investigation blocking
                 # The callback will be called synchronously during the run
                 result = service.investigate(
                     analysis_result=analysis_result,
-                    user_role="Senior Software Engineer",
-                    user_question="Give me a comprehensive overview of the architecture and execution flow.",
+                    user_role=user_role,
+                    user_question=user_question,
                     progress_callback=progress_callback
                 )
                 
                 status.update(label="Investigation Complete", state="complete", expanded=False)
                 
-            # Save to session state and rerun to show final static view
+            # Save to session state
             st.session_state.investigation_result = result
+            
+            # If onboarding guide was generated successfully, navigate to it automatically
+            if result.onboarding_guide:
+                st.session_state.app_state = "onboarding"
+                
             st.rerun()
             
         except Exception as e:

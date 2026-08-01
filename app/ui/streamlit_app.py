@@ -12,6 +12,8 @@ from app.config.settings import settings
 from app.ui.components.landing import render_landing
 from app.ui.components.dashboard import render_dashboard
 from app.ui.components.investigation_dashboard import render_investigation_dashboard
+from app.ui.components.onboarding_guide import render_onboarding_guide
+from app.ui.components.reviewer_dashboard import render_reviewer_dashboard
 from app.utils.logger import get_logger
 from app.tools.repository_tools import clear_tool_cache
 
@@ -46,7 +48,7 @@ def main():
         else:
             st.session_state.app_state = 'landing'
 
-    if st.session_state.app_state in ["dashboard", "investigation"]:
+    if st.session_state.app_state in ["dashboard", "investigation", "onboarding", "reviewer"]:
         with st.sidebar:
             st.title("RepoLens")
             if 'user_context' in st.session_state:
@@ -62,6 +64,16 @@ def main():
             if st.button("🤖 AI Investigation", type="primary" if st.session_state.app_state == "investigation" else "secondary"):
                 st.session_state.app_state = "investigation"
                 st.rerun()
+
+            if "investigation_result" in st.session_state:
+                if st.session_state.investigation_result.onboarding_guide:
+                    if st.button("📘 Onboarding Guide", type="primary" if st.session_state.app_state == "onboarding" else "secondary"):
+                        st.session_state.app_state = "onboarding"
+                        st.rerun()
+                if st.session_state.investigation_result.review_report:
+                    if st.button("🔍 Reviewer Dashboard", type="primary" if st.session_state.app_state == "reviewer" else "secondary"):
+                        st.session_state.app_state = "reviewer"
+                        st.rerun()
                 
             st.divider()
             if st.button("← Load New Repository"):
@@ -94,6 +106,18 @@ def main():
             render_investigation_dashboard(st.session_state.analysis_result)
         else:
             st.session_state.app_state = "landing"
+            st.rerun()
+    elif st.session_state.app_state == "onboarding":
+        if "investigation_result" in st.session_state and st.session_state.investigation_result.onboarding_guide:
+            render_onboarding_guide(st.session_state.investigation_result.onboarding_guide)
+        else:
+            st.session_state.app_state = "investigation"
+            st.rerun()
+    elif st.session_state.app_state == "reviewer":
+        if "investigation_result" in st.session_state and st.session_state.investigation_result.review_report:
+            render_reviewer_dashboard(st.session_state.investigation_result.review_report)
+        else:
+            st.session_state.app_state = "investigation"
             st.rerun()
 
 if __name__ == "__main__":

@@ -24,5 +24,12 @@ class InvestigationState(TypedDict):
     timeline_events: Annotated[List[str], operator.add]             # List of serialised TimelineEvent JSONs
 
     # Control flow
-    current_stage: str                     # "supervisor" | "investigate" | "merge" | "done"
+    current_stage: str                     # "supervisor" | "investigate" | "merge" | "reviewing" | "revising" | "done"
     errors: Annotated[List[str], operator.add]
+
+    # Phase 3: Reviewer
+    review_report: str                       # Serialised ReviewReport
+    revision_requests: List[str]             # List of serialised RevisionRequests
+
+    # Phase 3: Synthesizer
+    onboarding_guide: str                    # Serialised OnboardingGuide
