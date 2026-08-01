@@ -42,6 +42,14 @@ class InvestigationService:
             "errors": []
         }
         
+        import asyncio
+        try:
+            loop = asyncio.get_event_loop()
+            if loop.is_closed():
+                asyncio.set_event_loop(asyncio.new_event_loop())
+        except RuntimeError:
+            asyncio.set_event_loop(asyncio.new_event_loop())
+            
         # Execute workflow
         final_state = initial_state
         for state in self.workflow.stream(initial_state, stream_mode="values"):
@@ -66,11 +74,23 @@ class InvestigationService:
                 
         timeline = [TimelineEvent(**json.loads(ev)) for ev in final_state.get("timeline_events", [])]
         
+        from app.models.review_models import ReviewReport
+        review_report = None
+        if final_state.get("review_report"):
+             review_report = ReviewReport(**json.loads(final_state["review_report"]))
+
+        from app.models.onboarding_models import OnboardingGuide
+        onboarding_guide = None
+        if final_state.get("onboarding_guide"):
+             onboarding_guide = OnboardingGuide(**json.loads(final_state["onboarding_guide"]))
+        
         return InvestigationResult(
             plan=plan,
             agent_reports=agent_reports,
             timeline=timeline,
             started_at=start_time,
             completed_at=end_time,
-            duration_seconds=time.time() - start_ts
+            duration_seconds=time.time() - start_ts,
+            review_report=review_report,
+            onboarding_guide=onboarding_guide
         )

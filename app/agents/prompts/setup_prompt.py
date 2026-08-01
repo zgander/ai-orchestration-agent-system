@@ -17,7 +17,11 @@ Your tasks are:
 {task_list}
 
 Repository context:
-{context.get('repository_name')}
+Name: {context.get('repository_name')}
+Strategy: {context.get('investigation_strategy')}
+
+Analysis Summary:
+{context.get('analysis_result_json')}
 
 Begin your investigation using tools.
 """
