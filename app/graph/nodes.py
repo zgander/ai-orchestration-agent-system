@@ -80,10 +80,13 @@ class WorkflowNodes:
             }
             
         agent = agent_class(self.llm, tools, self.settings)
+        from app.agents.prompts.prompt_utils import build_condensed_context
+        condensed_analysis = build_condensed_context(state.get("analysis_result_json", "{}"), agent_type)
+        
         context = {
             "repository_name": state["repository_name"],
             "repository_path": state["repository_path"],
-            "analysis_result_json": state.get("analysis_result_json", "{}"),
+            "analysis_result_json": condensed_analysis,
             "investigation_strategy": plan.strategy if plan else "Standard Investigation"
         }
         

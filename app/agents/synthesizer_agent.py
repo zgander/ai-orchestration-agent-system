@@ -159,15 +159,77 @@ class SynthesizerAgent:
             for f in findings:
                 findings_text += f"Title: {f.title}\nDescription: {f.description}\n\n"
 
-        # 1. Overview
-        logger.info("[Synthesizer] Step 1/6: Generating Overview...")
-        overview_prompt = build_overview_prompt(
-            findings=findings_text,
-            analysis_data=analysis_result.model_dump_json(include={'tech_stack', 'statistics'}),
-            role=role.value
-        )
-        overview_data = self._extract(overview_prompt, OverviewOutput, "Overview")
+        from concurrent.futures import ThreadPoolExecutor
         
+        overview_data = None
+        arch_data = None
+        folder_data = None
+        exec_data = None
+        reading_data = None
+        setup_data = None
+
+        def extract_overview():
+            nonlocal overview_data
+            logger.info("[Synthesizer] Generating Overview...")
+            overview_prompt = build_overview_prompt(
+                findings=findings_text,
+                analysis_data=analysis_result.model_dump_json(include={'tech_stack', 'statistics'}),
+                role=role.value
+            )
+            overview_data = self._extract(overview_prompt, OverviewOutput, "Overview")
+
+        def extract_architecture():
+            nonlocal arch_data
+            logger.info("[Synthesizer] Generating Architecture...")
+            arch_prompt = build_architecture_prompt(findings_text, role.value)
+            arch_data = self._extract(arch_prompt, ArchitectureOutput, "Architecture")
+
+        def extract_folder_guide():
+            nonlocal folder_data
+            logger.info("[Synthesizer] Generating Folder Guide...")
+            folder_prompt = build_folder_guide_prompt(
+                findings=findings_text,
+                analysis_data=analysis_result.tree.model_dump_json(include={'root'}),
+                role=role.value
+            )
+            folder_data = self._extract(folder_prompt, FolderGuideOutput, "Folder Guide")
+            
+        def extract_execution_flows():
+            nonlocal exec_data
+            logger.info("[Synthesizer] Generating Execution Flows...")
+            exec_prompt = build_execution_flow_prompt(findings_text, role.value)
+            exec_data = self._extract(exec_prompt, ExecutionFlowsOutput, "Execution Flows")
+            
+        def extract_reading_order():
+            nonlocal reading_data
+            logger.info("[Synthesizer] Generating Reading Order...")
+            reading_prompt = build_reading_order_prompt(findings_text, role.value)
+            reading_data = self._extract(reading_prompt, ReadingOrderOutput, "Reading Order")
+            
+        def extract_setup_guide():
+            nonlocal setup_data
+            logger.info("[Synthesizer] Generating Setup Guide...")
+            setup_prompt = build_setup_guide_prompt(
+                findings=findings_text,
+                analysis_data=analysis_result.model_dump_json(include={'env_variables'}),
+                role=role.value
+            )
+            setup_data = self._extract(setup_prompt, SetupGuideOutput, "Setup Guide")
+
+        logger.info(f"Synthesizer running parallel extractions...")
+        with ThreadPoolExecutor(max_workers=6) as executor:
+            futures = [
+                executor.submit(extract_overview),
+                executor.submit(extract_architecture),
+                executor.submit(extract_folder_guide),
+                executor.submit(extract_execution_flows),
+                executor.submit(extract_reading_order),
+                executor.submit(extract_setup_guide),
+            ]
+            for future in futures:
+                future.result()  # Wait for all to complete
+                
+        # 1. Overview
         repo_overview = RepositoryOverview(
             name=analysis_result.repository_info.name,
             description=overview_data.description if overview_data else "Failed to generate description.",
@@ -179,21 +241,7 @@ class SynthesizerAgent:
             statistics=analysis_result.statistics.model_dump()
         )
 
-        # 2. Architecture
-        logger.info("[Synthesizer] Step 2/6: Generating Architecture...")
-        arch_prompt = build_architecture_prompt(findings_text, role.value)
-        arch_data = self._extract(arch_prompt, ArchitectureOutput, "Architecture")
-
         # 3. Folders and Files
-        logger.info("[Synthesizer] Step 3/6: Generating Folder Guide...")
-        folder_prompt = build_folder_guide_prompt(
-            findings=findings_text,
-            analysis_data=analysis_result.tree.model_dump_json(include={'root'}),
-            role=role.value
-        )
-        folder_data = self._extract(folder_prompt, FolderGuideOutput, "Folder Guide")
-
-        # Convert simplified folder entries to the full onboarding models
         folder_guide = []
         if folder_data and folder_data.folders:
             for entry in folder_data.folders:
@@ -218,10 +266,6 @@ class SynthesizerAgent:
                 ))
 
         # 4. Execution Flows
-        logger.info("[Synthesizer] Step 4/6: Generating Execution Flows...")
-        exec_prompt = build_execution_flow_prompt(findings_text, role.value)
-        exec_data = self._extract(exec_prompt, ExecutionFlowsOutput, "Execution Flows")
-
         execution_flows = []
         if exec_data and exec_data.flows:
             for flow in exec_data.flows:
@@ -245,10 +289,6 @@ class SynthesizerAgent:
             ))
 
         # 6. Reading Order
-        logger.info("[Synthesizer] Step 5/6: Generating Reading Order...")
-        reading_prompt = build_reading_order_prompt(findings_text, role.value)
-        reading_data = self._extract(reading_prompt, ReadingOrderOutput, "Reading Order")
-
         reading_order = []
         if reading_data and reading_data.days:
             for day in reading_data.days:
@@ -260,14 +300,6 @@ class SynthesizerAgent:
                 ))
 
         # 7. Setup Guide
-        logger.info("[Synthesizer] Step 6/6: Generating Setup Guide...")
-        setup_prompt = build_setup_guide_prompt(
-            findings=findings_text,
-            analysis_data=analysis_result.model_dump_json(include={'env_variables'}),
-            role=role.value
-        )
-        setup_data = self._extract(setup_prompt, SetupGuideOutput, "Setup Guide")
-
         setup_guide = SetupGuide(
             installation_steps=[], environment_variables=[], run_commands=[], testing_commands=[]
         )

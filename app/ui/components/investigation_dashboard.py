@@ -56,8 +56,25 @@ def render_investigation_dashboard(analysis_result: AnalysisResult):
             settings = Settings()
             service = InvestigationService(settings)
             
+            from app.services.investigation_cache import load_investigation_result, save_investigation_result
+            user_role = st.session_state.user_context.role.value if 'user_context' in st.session_state else "Full Stack Developer"
+            user_question = st.session_state.user_context.question if 'user_context' in st.session_state and st.session_state.user_context.question else "Give me a comprehensive overview of the architecture and execution flow."
+            
+            cached_result = load_investigation_result(analysis_result.repository_info.name, user_role, user_question)
+            
+            if cached_result:
+                st.info("A recent investigation for this repository and query was found.")
+                if st.button("Load Cached Result", type="primary"):
+                    st.session_state.investigation_result = cached_result
+                    if cached_result.onboarding_guide:
+                        st.session_state.app_state = "onboarding"
+                    st.rerun()
+                    
             with status_placeholder.status("Running AI Investigation...", expanded=True) as status:
                 st.write("Initializing...")
+                
+                from app.tools.cache_utils import preseed_tool_cache
+                preseed_tool_cache(analysis_result)
                 
                 # We need a closure to capture timeline events and update the UI
                 timeline_events = []
@@ -85,9 +102,6 @@ def render_investigation_dashboard(analysis_result: AnalysisResult):
                         with cards_placeholder.container():
                             render_agent_cards({}, current_running=latest.agent_type, completed_agents=completed_agents)
                 
-                user_role = st.session_state.user_context.role.value if 'user_context' in st.session_state else "Full Stack Developer"
-                user_question = st.session_state.user_context.question if 'user_context' in st.session_state and st.session_state.user_context.question else "Give me a comprehensive overview of the architecture and execution flow."
-                
                 # Run the investigation blocking
                 # The callback will be called synchronously during the run
                 result = service.investigate(
@@ -98,6 +112,8 @@ def render_investigation_dashboard(analysis_result: AnalysisResult):
                 )
                 
                 status.update(label="Investigation Complete", state="complete", expanded=False)
+                
+            save_investigation_result(analysis_result.repository_info.name, user_role, user_question, result)
                 
             # Save to session state
             st.session_state.investigation_result = result
