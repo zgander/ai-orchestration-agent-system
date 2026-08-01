@@ -25,15 +25,16 @@ class Settings(BaseSettings):
     # --- Phase 2 Additions ---
     # LLM Provider
     llm_provider: str = "ollama"
-    ollama_model: str = "llama3.2:3b"
+    ollama_model: str = "qwen2.5:7b"
     ollama_base_url: str = "http://127.0.0.1:11434"
     temperature: float = 0
-    max_tokens: int = 4096
+    max_tokens: int = 2048
 
     # Agent Settings
-    agent_max_iterations: int = 15
+    agent_max_iterations: int = 10
     agent_timeout_seconds: int = 120
-    parallel_execution: bool = False
+    parallel_execution: bool = True
+    max_parallel_agents: int = 2
 
     # --- Phase 3 Additions ---
     # Reviewer

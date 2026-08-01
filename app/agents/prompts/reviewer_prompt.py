@@ -20,3 +20,13 @@ Please review the following finding produced by the {agent_type} agent:
 
 Validate the evidence and determine if this finding should be APPROVED or REJECTED.
 """
+
+def build_reviewer_batch_prompt(findings_json: str) -> str:
+    return f"""
+Please review the following list of findings produced by the specialist agents:
+
+{findings_json}
+
+For each finding, validate the evidence and determine if it should be APPROVED or REJECTED.
+Return a list of reviews corresponding to the findings in the same order.
+"""
