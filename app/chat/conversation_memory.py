@@ -45,7 +45,7 @@ class ConversationMemory:
         try:
             with open(session_file, "r", encoding="utf-8") as f:
                 data = json.load(f)
-            return ChatSession(**data)
+            return ChatSession.model_validate(data)
         except Exception as e:
             logger.error(f"Failed to load chat session {session_id}: {e}")
             return None
@@ -89,7 +89,7 @@ class ConversationMemory:
             try:
                 with open(file_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
-                sessions.append(ChatSession(**data))
+                sessions.append(ChatSession.model_validate(data))
             except Exception as e:
                 logger.error(f"Failed to read session file {file_path}: {e}")
                 

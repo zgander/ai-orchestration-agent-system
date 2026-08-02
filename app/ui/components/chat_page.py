@@ -7,8 +7,8 @@ from app.ui.components.code_viewer import render_code_viewer
 def render_chat_page(chat_service: ChatService):
     st.title("💬 Repository Chat")
     
-    repo_name = st.session_state.repository_info.name
-    repo_path = st.session_state.repository_info.local_path
+    repo_name = st.session_state.analysis_result.repository_info.name
+    repo_path = str(st.session_state.analysis_result.repository_info.root_path)
     
     st.markdown(f"**repo:** `{repo_name}`")
     st.divider()
@@ -25,9 +25,10 @@ def render_chat_page(chat_service: ChatService):
     
     # Sidebar navigation back
     st.sidebar.divider()
-    if st.sidebar.button("← Back to Guide", use_container_width=True):
-        st.session_state.app_state = "onboarding"
-        st.rerun()
+    if getattr(st.session_state, "investigation_result", None) and st.session_state.investigation_result.onboarding_guide:
+        if st.sidebar.button("← Back to Guide", use_container_width=True):
+            st.session_state.app_state = "onboarding"
+            st.rerun()
         
     # If code viewer is active, show it
     if st.session_state.active_code_viewer:

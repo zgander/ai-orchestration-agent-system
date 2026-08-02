@@ -64,11 +64,16 @@ def render_investigation_dashboard(analysis_result: AnalysisResult):
             
             if cached_result:
                 st.info("A recent investigation for this repository and query was found.")
-                if st.button("Load Cached Result", type="primary"):
-                    st.session_state.investigation_result = cached_result
-                    if cached_result.onboarding_guide:
-                        st.session_state.app_state = "onboarding"
-                    st.rerun()
+                col1, col2 = st.columns(2)
+                with col1:
+                    if st.button("Load Cached Result", type="primary"):
+                        st.session_state.investigation_result = cached_result
+                        if cached_result.onboarding_guide:
+                            st.session_state.app_state = "onboarding"
+                        st.rerun()
+                with col2:
+                    if not st.button("Run New Investigation"):
+                        return
                     
             with status_placeholder.status("Running AI Investigation...", expanded=True) as status:
                 st.write("Initializing...")

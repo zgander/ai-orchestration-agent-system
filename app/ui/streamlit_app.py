@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 # Add project root to path for imports
-root_path = Path(__file__).parent.parent.parent.parent
+root_path = Path(__file__).parent.parent.parent
 if str(root_path) not in sys.path:
     sys.path.insert(0, str(root_path))
 
@@ -28,8 +28,8 @@ def get_repository_service():
 
 @st.cache_resource
 def get_chat_service():
-    from app.llm_factory import get_llm
-    return ChatService(get_llm(), settings)
+    from app.utils.llm_factory import LLMFactory
+    return ChatService(LLMFactory.get_llm(settings), settings)
 
 def load_css():
     css_path = Path(__file__).parent / "styles" / "custom.css"

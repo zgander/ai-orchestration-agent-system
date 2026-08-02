@@ -1,0 +1,1391 @@
+{
+  "plan": {
+    "repository_name": "Multi-Agent-Placement-System",
+    "tasks": [
+      {
+        "task_id": "arch_01",
+        "agent_type": "ARCHITECTURE",
+        "description": "Identify the main components of the system (e.g., state management, agent types) and their relationships. Focus on files: main_graph.py, state.py.",
+        "status": "IDLE",
+        "created_at": "2026-08-01T13:46:17.738714Z",
+        "completed_at": null
+      },
+      {
+        "task_id": "arch_02",
+        "agent_type": "ARCHITECTURE",
+        "description": "Analyze the structure and responsibilities of each agent (gap_agent.py, interview_agent.py, job_agent.py). Determine how these agents interact with the main system components.",
+        "status": "IDLE",
+        "created_at": "2026-08-01T13:46:17.738714Z",
+        "completed_at": null
+      },
+      {
+        "task_id": "exec_01",
+        "agent_type": "EXECUTION_FLOW",
+        "description": "Determine the startup sequence by examining the initialization process in main_graph.py and state.py. Identify any external dependencies or configurations required at startup.",
+        "status": "IDLE",
+        "created_at": "2026-08-01T13:46:17.738714Z",
+        "completed_at": null
+      },
+      {
+        "task_id": "exec_02",
+        "agent_type": "EXECUTION_FLOW",
+        "description": "Trace the request lifecycle, starting from user input to the final response. Focus on how data flows through different components and agents (gap_agent.py, interview_agent.py, job_agent.py).",
+        "status": "IDLE",
+        "created_at": "2026-08-01T13:46:17.738714Z",
+        "completed_at": null
+      },
+      {
+        "task_id": "0881e201-7b02-4f53-82c4-eeb9218b4076",
+        "agent_type": "API_DATA",
+        "description": "Investigate all API_DATA aspects of the repository.",
+        "status": "IDLE",
+        "created_at": "2026-08-01T13:46:17.738714Z",
+        "completed_at": null
+      },
+      {
+        "task_id": "da8ceb4b-67f0-41d4-b86c-e4494880be04",
+        "agent_type": "SETUP",
+        "description": "Investigate all SETUP aspects of the repository.",
+        "status": "IDLE",
+        "created_at": "2026-08-01T13:46:17.738714Z",
+        "completed_at": null
+      }
+    ],
+    "strategy": "The investigation will focus on understanding the high-level architecture and the detailed execution flow of the Multi-Agent-Placement-System. This involves identifying key modules, their interactions, and the sequence in which they are executed.",
+    "created_at": "2026-08-01T13:46:17.738714Z"
+  },
+  "agent_reports": {
+    "ARCHITECTURE": {
+      "agent_type": "ARCHITECTURE",
+      "status": "COMPLETED",
+      "tasks": [
+        {
+          "task_id": "arch_01",
+          "agent_type": "ARCHITECTURE",
+          "description": "Identify the main components of the system (e.g., state management, agent types) and their relationships. Focus on files: main_graph.py, state.py.",
+          "status": "COMPLETED",
+          "created_at": "2026-08-01T13:46:17.738714Z",
+          "completed_at": "2026-08-01T13:49:18.159321Z"
+        },
+        {
+          "task_id": "arch_02",
+          "agent_type": "ARCHITECTURE",
+          "description": "Analyze the structure and responsibilities of each agent (gap_agent.py, interview_agent.py, job_agent.py). Determine how these agents interact with the main system components.",
+          "status": "COMPLETED",
+          "created_at": "2026-08-01T13:46:17.738714Z",
+          "completed_at": "2026-08-01T13:49:18.159321Z"
+        }
+      ],
+      "findings": [
+        {
+          "title": "Architecture Style",
+          "description": "The system follows an agent-based architecture where multiple specialized agents handle different tasks.",
+          "evidence": [
+            {
+              "source_tool": "read_file",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "main_graph.py defines the flow of execution among various agents (`gap_agent`, `interview_agent`, `job_agent`, etc.).",
+              "relevance": "Tool: read_file, File Path: main_graph.py"
+            },
+            {
+              "source_tool": "read_file",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "Each agent is responsible for a specific task and interacts with shared state.",
+              "relevance": "Tool: read_file, File Paths: gap_agent.py, interview_agent.py, job_agent.py"
+            }
+          ],
+          "confidence": 0.95,
+          "category": "Architecture Style",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "Main Components and Their Relationships",
+          "description": "The system consists of several key modules including `state`, `agents`, `models`, and `utils`.",
+          "evidence": [
+            {
+              "source_tool": "get_repository_tree",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "Directory structure and file contents indicate clear separation of concerns.",
+              "relevance": "Tool: get_repository_tree, Tool: list_directory"
+            },
+            {
+              "source_tool": "read_file",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "Shared state management in `state.py`.",
+              "relevance": "Tool: read_file, File Path: state.py"
+            }
+          ],
+          "confidence": 0.95,
+          "category": "Modules",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "Agent Interactions",
+          "description": "Agents interact through a central graph defined in `main_graph.py`, which routes the execution flow based on the current state.",
+          "evidence": [
+            {
+              "source_tool": "read_file",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "`main_graph.py` defines the graph structure and routing logic.",
+              "relevance": "Tool: read_file, File Path: main_graph.py"
+            },
+            {
+              "source_tool": "read_file",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "Agents are defined with specific functions that update the state based on their task.",
+              "relevance": "Tools: read_file, File Paths: gap_agent.py, interview_agent.py, job_agent.py"
+            }
+          ],
+          "confidence": 0.95,
+          "category": "Patterns",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "Entry Points",
+          "description": "The execution starts from `main_graph.py` in the `__main__` block.",
+          "evidence": [
+            {
+              "source_tool": "get_entry_points",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "`main_graph.py` contains the main function that sets up the initial state and starts the execution flow.",
+              "relevance": ""
+            }
+          ],
+          "confidence": 0.95,
+          "category": "Entry Points",
+          "review_status": null,
+          "reviewer_note": null
+        }
+      ],
+      "tool_calls": [
+        {
+          "tool_name": "get_entry_points",
+          "input_args": {},
+          "output": "[\n  {\n    \"file\": \"main_graph.py\",\n    \"line\": 77,\n    \"description\": \"Python __main__ block\",\n    \"confidence\": 0.9\n  }\n]",
+          "success": true,
+          "duration_seconds": 0.0
+        },
+        {
+          "tool_name": "get_tech_stack",
+          "input_args": {},
+          "output": "{\n  \"languages\": [\n    {\n      \"name\": \"Python\",\n      \"confidence\": 1.0\n    }\n  ],\n  \"frameworks\": [],\n  \"databases\": [],\n  \"others\": []\n}",
+          "success": true,
+          "duration_seconds": 0.0
+        },
+        {
+          "tool_name": "get_dependency_graph",
+          "input_args": {},
+          "output": "{\n  \"total_nodes\": 10,\n  \"total_edges\": 21,\n  \"connected_components\": 2,\n  \"most_connected_files\": [\n    \"main_graph.py\",\n    \"state.py\",\n    \"models/schemas.py\",\n    \"utils/llm.py\",\n    \"agents/gap_agent.py\"\n  ]\n}",
+          "success": true,
+          "duration_seconds": 0.0
+        },
+        {
+          "tool_name": "read_file",
+          "input_args": {
+            "file_path": "main_graph.py"
+          },
+          "output": "from langgraph.graph import StateGraph,START, END\nfrom state import AgentState\nfrom agents.resume_agent import resume_agent\nfrom agents.job_agent import job_agent\nfrom agents.gap_agent import gap_agent\nfrom agents.roadmap_agent import roadmap_agent\nfrom agents.interview_agent import interview_agent\nfrom langgraph.pregel import RetryPolicy\nfrom loguru import logger\nfrom langgraph.checkpoint.memory import MemorySaver\n\n\nmemory = MemorySaver()\n\n\nretry_policy = RetryPolicy(max_attempts=3)\n\ndef route_...",
+          "success": true,
+          "duration_seconds": 0.0
+        },
+        {
+          "tool_name": "list_directory",
+          "input_args": {
+            "dir_path": "agents"
+          },
+          "output": "[\n  {\n    \"name\": \"gap_agent.py\",\n    \"type\": \"file\",\n    \"size\": 1220\n  },\n  {\n    \"name\": \"interview_agent.py\",\n    \"type\": \"file\",\n    \"size\": 1226\n  },\n  {\n    \"name\": \"job_agent.py\",\n    \"type\": \"file\",\n    \"size\": 861\n  },\n  {\n    \"name\": \"resume_agent.py\",\n    \"type\": \"file\",\n    \"size\": 1315\n  },\n  {\n    \"name\": \"roadmap_agent.py\",\n    \"type\": \"file\",\n    \"size\": 986\n  }\n]",
+          "success": true,
+          "duration_seconds": 0.0
+        },
+        {
+          "tool_name": "read_file",
+          "input_args": {
+            "file_path": "agents/gap_agent.py"
+          },
+          "output": "from loguru import logger\nfrom models.schemas import GapData\nfrom state import AgentState\nfrom utils.llm import llm\n\n# Bind the Pydantic model for Gap Analysis\nstructured_llm = llm.with_structured_output(GapData)\n\ndef gap_agent(state: AgentState):\n    logger.info(\"--- Executing AI Gap Analysis Node ---\")\n    \n    # Grab BOTH structured data points from the state\n    resume_data = state.get(\"resume_data\", {})\n    job_data = state.get(\"job_data\", {})\n    \n    prompt = f\"\"\"\n    You are an expert Ca...",
+          "success": true,
+          "duration_seconds": 0.0
+        },
+        {
+          "tool_name": "read_file",
+          "input_args": {
+            "file_path": "agents/interview_agent.py"
+          },
+          "output": "from loguru import logger\nfrom models.schemas import InterviewData\nfrom state import AgentState\nfrom utils.llm import llm\n\nstructured_llm = llm.with_structured_output(InterviewData)\n\ndef interview_agent(state: AgentState):\n    logger.info(\"--- Executing AI Interview Node ---\")\n    \n    # The interview agent can use the resume, the job description, and the gaps!\n    resume_data = state.get(\"resume_data\", {})\n    job_data = state.get(\"job_data\", {})\n    gap_analysis = state.get(\"gap_analysis\", {})...",
+          "success": true,
+          "duration_seconds": 0.0
+        },
+        {
+          "tool_name": "read_file",
+          "input_args": {
+            "file_path": "agents/job_agent.py"
+          },
+          "output": "from loguru import logger\nfrom models.schemas import JobData\nfrom state import AgentState\nfrom utils.llm import llm\n\nstructured_llm = llm.with_structured_output(JobData)\n\ndef job_agent(state: AgentState):\n    logger.info(\"--- Executing AI Job Node ---\")\n    \n    # Grab the job description instead of the resume\n    raw_job = state[\"raw_job_description\"]\n    \n    prompt = f\"\"\"\n    You are an expert HR data extractor. Extract the required information from the following Job Description.\n    You MUST...",
+          "success": true,
+          "duration_seconds": 0.0
+        }
+      ],
+      "reasoning_steps": [
+        "Used tool get_entry_points",
+        "Used tool get_tech_stack",
+        "Used tool get_dependency_graph",
+        "Used tool read_file",
+        "Used tool list_directory",
+        "Used tool read_file",
+        "Used tool read_file",
+        "Used tool read_file"
+      ],
+      "started_at": "2026-08-01T13:46:17.749351Z",
+      "completed_at": "2026-08-01T13:49:18.159321Z",
+      "error": null
+    },
+    "EXECUTION_FLOW": {
+      "agent_type": "EXECUTION_FLOW",
+      "status": "COMPLETED",
+      "tasks": [
+        {
+          "task_id": "exec_01",
+          "agent_type": "EXECUTION_FLOW",
+          "description": "Determine the startup sequence by examining the initialization process in main_graph.py and state.py. Identify any external dependencies or configurations required at startup.",
+          "status": "COMPLETED",
+          "created_at": "2026-08-01T13:46:17.738714Z",
+          "completed_at": "2026-08-01T13:48:33.089707Z"
+        },
+        {
+          "task_id": "exec_02",
+          "agent_type": "EXECUTION_FLOW",
+          "description": "Trace the request lifecycle, starting from user input to the final response. Focus on how data flows through different components and agents (gap_agent.py, interview_agent.py, job_agent.py).",
+          "status": "COMPLETED",
+          "created_at": "2026-08-01T13:46:17.738714Z",
+          "completed_at": "2026-08-01T13:48:33.089707Z"
+        }
+      ],
+      "findings": [
+        {
+          "title": "Startup Sequence and Initialization Process",
+          "description": "The application starts execution in `main_graph.py` at line 77, as indicated by the `if __name__ == '__main__':` block.",
+          "evidence": [
+            {
+              "source_tool": "get_entry_points",
+              "file_path": "main_graph.py (line 77)",
+              "line_numbers": "77",
+              "symbol": null,
+              "content": "The application starts execution in main_graph.py at line 77.",
+              "relevance": "This snippet confirms that the script is executed directly and sets up an initial state for processing."
+            },
+            {
+              "source_tool": "get_file_dependencies",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "Dependencies: AgentState from state.py, Agents (resume_agent, job_agent, gap_agent, roadmap_agent, interview_agent) from their respective files.",
+              "relevance": "The dependencies are clearly defined in the file."
+            }
+          ],
+          "confidence": 0.9,
+          "category": "Startup",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "Request Lifecycle Tracing",
+          "description": "The request lifecycle starts with user input (e.g., a resume and job description) and ends with a final response. Here’s how data flows through different components: User Input, Initialization of State, Graph Definition and Routing Logic, Node Invocation, Final Response.",
+          "evidence": [
+            {
+              "source_tool": "read_file",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "The entire request lifecycle from user input to final response is shown in the snippet.",
+              "relevance": "This snippet shows the entire request lifecycle from user input to final response."
+            }
+          ],
+          "confidence": 0.9,
+          "category": "Request Lifecycle",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "Communication Between Agents",
+          "description": "Agents (`gap_agent`, `interview_agent`, etc.) communicate through a graph structure defined in `main_graph.py`. Each agent processes data based on its specific role, and their interactions are managed by the routing logic.",
+          "evidence": [
+            {
+              "source_tool": "get_dependency_graph",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "The agents communicate through a defined graph structure, ensuring seamless data flow and processing.",
+              "relevance": "High connectivity of main_graph.py and the clear dependencies between files indicate a well-defined communication structure."
+            }
+          ],
+          "confidence": 0.95,
+          "category": "Communication",
+          "review_status": null,
+          "reviewer_note": null
+        }
+      ],
+      "tool_calls": [
+        {
+          "tool_name": "get_entry_points",
+          "input_args": {},
+          "output": "[\n  {\n    \"file\": \"main_graph.py\",\n    \"line\": 77,\n    \"description\": \"Python __main__ block\",\n    \"confidence\": 0.9\n  }\n]",
+          "success": true,
+          "duration_seconds": 0.0
+        },
+        {
+          "tool_name": "get_dependency_graph",
+          "input_args": {},
+          "output": "{\n  \"total_nodes\": 10,\n  \"total_edges\": 21,\n  \"connected_components\": 2,\n  \"most_connected_files\": [\n    \"main_graph.py\",\n    \"state.py\",\n    \"models/schemas.py\",\n    \"utils/llm.py\",\n    \"agents/gap_agent.py\"\n  ]\n}",
+          "success": true,
+          "duration_seconds": 0.0
+        },
+        {
+          "tool_name": "search_symbols",
+          "input_args": {
+            "query": "AgentState"
+          },
+          "output": "[\n  {\n    \"name\": \"AgentState\",\n    \"kind\": \"CLASS\",\n    \"file\": \"state.py\",\n    \"line\": 5,\n    \"parent\": null\n  }\n]",
+          "success": true,
+          "duration_seconds": 0.0
+        },
+        {
+          "tool_name": "read_file",
+          "input_args": {
+            "file_path": "main_graph.py"
+          },
+          "output": "from langgraph.graph import StateGraph,START, END\nfrom state import AgentState\nfrom agents.resume_agent import resume_agent\nfrom agents.job_agent import job_agent\nfrom agents.gap_agent import gap_agent\nfrom agents.roadmap_agent import roadmap_agent\nfrom agents.interview_agent import interview_agent\nfrom langgraph.pregel import RetryPolicy\nfrom loguru import logger\nfrom langgraph.checkpoint.memory import MemorySaver\n\n\nmemory = MemorySaver()\n\n\nretry_policy = RetryPolicy(max_attempts=3)\n\ndef route_...",
+          "success": true,
+          "duration_seconds": 0.0
+        },
+        {
+          "tool_name": "get_file_dependencies",
+          "input_args": {
+            "file_path": "main_graph.py"
+          },
+          "output": "{\n  \"file\": \"main_graph.py\",\n  \"imports\": [\n    {\n      \"file\": \"state.py\",\n      \"import\": \"AgentState\"\n    },\n    {\n      \"file\": \"agents/resume_agent.py\",\n      \"import\": \"resume_agent\"\n    },\n    {\n      \"file\": \"agents/job_agent.py\",\n      \"import\": \"job_agent\"\n    },\n    {\n      \"file\": \"agents/gap_agent.py\",\n      \"import\": \"gap_agent\"\n    },\n    {\n      \"file\": \"agents/roadmap_agent.py\",\n      \"import\": \"roadmap_agent\"\n    },\n    {\n      \"file\": \"agents/interview_agent.py\",\n      \"import...",
+          "success": true,
+          "duration_seconds": 0.0
+        }
+      ],
+      "reasoning_steps": [
+        "Used tool get_entry_points",
+        "Used tool get_dependency_graph",
+        "Used tool search_symbols",
+        "Used tool read_file",
+        "Used tool get_file_dependencies"
+      ],
+      "started_at": "2026-08-01T13:46:17.752356Z",
+      "completed_at": "2026-08-01T13:48:33.089707Z",
+      "error": null
+    },
+    "API_DATA": {
+      "agent_type": "API_DATA",
+      "status": "COMPLETED",
+      "tasks": [
+        {
+          "task_id": "0881e201-7b02-4f53-82c4-eeb9218b4076",
+          "agent_type": "API_DATA",
+          "description": "Investigate all API_DATA aspects of the repository.",
+          "status": "COMPLETED",
+          "created_at": "2026-08-01T13:46:17.738714Z",
+          "completed_at": "2026-08-01T13:47:15.781522Z"
+        }
+      ],
+      "findings": [
+        {
+          "title": "API Surface",
+          "description": "No API endpoints were detected. This suggests that the system might be a standalone application or a microservice without exposed HTTP endpoints.",
+          "evidence": [
+            {
+              "source_tool": "get_api_endpoints",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "{}",
+              "relevance": "No API endpoints were detected."
+            }
+          ],
+          "confidence": 0.8,
+          "category": "API Surface",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "Data Models",
+          "description": "The repository contains several data model classes defined in `models/schemas.py` such as `ResumeData`, `JobData`, `GapData`, and `RoadmapData`.",
+          "evidence": [
+            {
+              "source_tool": "search_symbols",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "{\"name\": \"search_symbols\", \"arguments\": {\"query\": \"schemas\"}}",
+              "relevance": "Symbols related to data models were found."
+            }
+          ],
+          "confidence": 1.0,
+          "category": "Data Models",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "Database Interactions",
+          "description": "No direct database interactions were found in the provided symbols and dependency graph.",
+          "evidence": [
+            {
+              "source_tool": "get_dependency_graph",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "{\"name\": \"get_dependency_graph\", \"arguments\": {}}",
+              "relevance": "No direct database interactions were found."
+            }
+          ],
+          "confidence": 0.6,
+          "category": "Database",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "Middleware",
+          "description": "The `utils/llm.py` module contains utility functions for interacting with language models, which could be considered middleware.",
+          "evidence": [
+            {
+              "source_tool": "get_dependency_graph",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "{\"name\": \"get_dependency_graph\", \"arguments\": {}}",
+              "relevance": "Symbols related to utility functions were found."
+            }
+          ],
+          "confidence": 0.9,
+          "category": "Middleware",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "High-Level Architecture and Execution Flow",
+          "description": "The `main_graph.py` file appears to be the entry point of the application, importing various agent modules (`gap_agent`, `interview_agent`, `job_agent`, etc.) and possibly orchestrating their execution.",
+          "evidence": [
+            {
+              "source_tool": "get_dependency_graph",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "{\"name\": \"get_dependency_graph\", \"arguments\": {}}",
+              "relevance": "Symbols related to the main execution flow were found."
+            }
+          ],
+          "confidence": 1.0,
+          "category": "API Surface (indirectly)",
+          "review_status": null,
+          "reviewer_note": null
+        }
+      ],
+      "tool_calls": [
+        {
+          "tool_name": "get_api_endpoints",
+          "input_args": {},
+          "output": "[]",
+          "success": true,
+          "duration_seconds": 0.0
+        },
+        {
+          "tool_name": "get_repository_tree",
+          "input_args": {},
+          "output": "{\n  \"total_files\": 10,\n  \"total_dirs\": 4,\n  \"max_depth\": 2,\n  \"root\": {\n    \"name\": \"repolens_nnmeqaxz\",\n    \"is_dir\": true,\n    \"size\": 11819,\n    \"children\": [\n      {\n        \"name\": \"agents\",\n        \"is_dir\": true,\n        \"size\": 5608,\n        \"children\": [\n          {\n            \"name\": \"gap_agent.py\",\n            \"is_dir\": false,\n            \"size\": 1220\n          },\n          {\n            \"name\": \"interview_agent.py\",\n            \"is_dir\": false,\n            \"size\": 1226\n          },\n...",
+          "success": true,
+          "duration_seconds": 0.0
+        },
+        {
+          "tool_name": "get_dependency_graph",
+          "input_args": {},
+          "output": "{\n  \"total_nodes\": 10,\n  \"total_edges\": 21,\n  \"connected_components\": 2,\n  \"most_connected_files\": [\n    \"main_graph.py\",\n    \"state.py\",\n    \"models/schemas.py\",\n    \"utils/llm.py\",\n    \"agents/gap_agent.py\"\n  ]\n}",
+          "success": true,
+          "duration_seconds": 0.0
+        }
+      ],
+      "reasoning_steps": [
+        "Used tool get_api_endpoints",
+        "Used tool get_repository_tree",
+        "Used tool get_dependency_graph"
+      ],
+      "started_at": "2026-08-01T13:46:17.744713Z",
+      "completed_at": "2026-08-01T13:47:15.781522Z",
+      "error": null
+    },
+    "SETUP": {
+      "agent_type": "SETUP",
+      "status": "COMPLETED",
+      "tasks": [
+        {
+          "task_id": "da8ceb4b-67f0-41d4-b86c-e4494880be04",
+          "agent_type": "SETUP",
+          "description": "Investigate all SETUP aspects of the repository.",
+          "status": "COMPLETED",
+          "created_at": "2026-08-01T13:46:17.738714Z",
+          "completed_at": "2026-08-01T13:48:08.277198Z"
+        }
+      ],
+      "findings": [
+        {
+          "title": "High-Level Architecture and Execution Flow",
+          "description": "The repository `Multi-Agent-Placement-System` is primarily written in Python and contains modules for different agents. The main entry point of the application is identified, but no Docker configuration or environment variables are found.",
+          "evidence": [],
+          "confidence": 1.0,
+          "category": "Technology Stack",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "Entry Point",
+          "description": "The main execution block is located in `main_graph.py` at line 77, where the script checks if it's being run as the main module (`if __name__ == '__main__':`).",
+          "evidence": [],
+          "confidence": 1.0,
+          "category": "Entry Point",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "Environment Variables",
+          "description": "No environment variables are detected in any configuration files or code.",
+          "evidence": [],
+          "confidence": 0.0,
+          "category": "Environment",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "Docker Configuration",
+          "description": "No `Dockerfile` was found in the repository directory structure.",
+          "evidence": [],
+          "confidence": 0.0,
+          "category": "Docker",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "Build System and Testing Frameworks",
+          "description": "The project does not use a build system like Make, Gradle, or Maven, nor any testing frameworks such as PyTest, Unittest, or Nose.",
+          "evidence": [],
+          "confidence": 0.0,
+          "category": "Testing",
+          "review_status": null,
+          "reviewer_note": null
+        }
+      ],
+      "tool_calls": [
+        {
+          "tool_name": "get_repository_tree",
+          "input_args": {},
+          "output": "{\n  \"total_files\": 10,\n  \"total_dirs\": 4,\n  \"max_depth\": 2,\n  \"root\": {\n    \"name\": \"repolens_nnmeqaxz\",\n    \"is_dir\": true,\n    \"size\": 11819,\n    \"children\": [\n      {\n        \"name\": \"agents\",\n        \"is_dir\": true,\n        \"size\": 5608,\n        \"children\": [\n          {\n            \"name\": \"gap_agent.py\",\n            \"is_dir\": false,\n            \"size\": 1220\n          },\n          {\n            \"name\": \"interview_agent.py\",\n            \"is_dir\": false,\n            \"size\": 1226\n          },\n...",
+          "success": true,
+          "duration_seconds": 0.0
+        },
+        {
+          "tool_name": "get_tech_stack",
+          "input_args": {},
+          "output": "{\n  \"languages\": [\n    {\n      \"name\": \"Python\",\n      \"confidence\": 1.0\n    }\n  ],\n  \"frameworks\": [],\n  \"databases\": [],\n  \"others\": []\n}",
+          "success": true,
+          "duration_seconds": 0.0
+        },
+        {
+          "tool_name": "search_files",
+          "input_args": {
+            "pattern": "Dockerfile"
+          },
+          "output": "No matches found for pattern 'Dockerfile'",
+          "success": true,
+          "duration_seconds": 0.0
+        },
+        {
+          "tool_name": "get_environment_variables",
+          "input_args": {},
+          "output": "{\n  \"variables\": []\n}",
+          "success": true,
+          "duration_seconds": 0.0
+        }
+      ],
+      "reasoning_steps": [
+        "Used tool get_repository_tree",
+        "Used tool get_tech_stack",
+        "Used tool search_files",
+        "Used tool get_environment_variables"
+      ],
+      "started_at": "2026-08-01T13:46:17.755862Z",
+      "completed_at": "2026-08-01T13:48:08.277198Z",
+      "error": null
+    }
+  },
+  "timeline": [
+    {
+      "timestamp": "2026-08-01T13:46:17.738714Z",
+      "agent_type": "SUPERVISOR",
+      "event": "Supervisor created investigation plan",
+      "detail": "Created 6 tasks."
+    },
+    {
+      "timestamp": "2026-08-01T13:47:15.781522Z",
+      "agent_type": "API_DATA",
+      "event": "API_DATA completed investigation",
+      "detail": "Found 5 findings."
+    },
+    {
+      "timestamp": "2026-08-01T13:49:18.159321Z",
+      "agent_type": "ARCHITECTURE",
+      "event": "ARCHITECTURE completed investigation",
+      "detail": "Found 4 findings."
+    },
+    {
+      "timestamp": "2026-08-01T13:48:33.089707Z",
+      "agent_type": "EXECUTION_FLOW",
+      "event": "EXECUTION_FLOW completed investigation",
+      "detail": "Found 3 findings."
+    },
+    {
+      "timestamp": "2026-08-01T13:48:08.277198Z",
+      "agent_type": "SETUP",
+      "event": "SETUP completed investigation",
+      "detail": "Found 5 findings."
+    },
+    {
+      "timestamp": "2026-08-01T13:49:18.175894Z",
+      "agent_type": "SUPERVISOR",
+      "event": "Investigation completed, starting review",
+      "detail": null
+    },
+    {
+      "timestamp": "2026-08-01T13:49:45.123379Z",
+      "agent_type": "REVIEWER",
+      "event": "Review completed. 0 approved, 5 rejected.",
+      "detail": null
+    },
+    {
+      "timestamp": "2026-08-01T13:49:45.128443Z",
+      "agent_type": "REVIEWER",
+      "event": "Revisions requested, but automatic re-analysis is skipped. Marking as uncertain.",
+      "detail": null
+    },
+    {
+      "timestamp": "2026-08-01T13:49:45.131442Z",
+      "agent_type": "SYNTHESIZER",
+      "event": "Synthesizing onboarding guide...",
+      "detail": null
+    },
+    {
+      "timestamp": "2026-08-01T13:51:15.183772Z",
+      "agent_type": "SYNTHESIZER",
+      "event": "Onboarding guide generated successfully.",
+      "detail": null
+    }
+  ],
+  "started_at": "2026-08-01T13:46:02.670511Z",
+  "completed_at": "2026-08-01T13:51:15.191027Z",
+  "duration_seconds": 312.52151465415955,
+  "review_report": {
+    "reviews": [
+      {
+        "finding_title": "Architecture Style",
+        "agent_type": "ARCHITECTURE",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Batch review mismatch",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Architecture Style",
+          "description": "The system follows an agent-based architecture where multiple specialized agents handle different tasks.",
+          "evidence": [
+            {
+              "source_tool": "read_file",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "main_graph.py defines the flow of execution among various agents (`gap_agent`, `interview_agent`, `job_agent`, etc.).",
+              "relevance": "Tool: read_file, File Path: main_graph.py"
+            },
+            {
+              "source_tool": "read_file",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "Each agent is responsible for a specific task and interacts with shared state.",
+              "relevance": "Tool: read_file, File Paths: gap_agent.py, interview_agent.py, job_agent.py"
+            }
+          ],
+          "confidence": 0.95,
+          "category": "Architecture Style",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null
+      },
+      {
+        "finding_title": "Main Components and Their Relationships",
+        "agent_type": "ARCHITECTURE",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Batch review mismatch",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Main Components and Their Relationships",
+          "description": "The system consists of several key modules including `state`, `agents`, `models`, and `utils`.",
+          "evidence": [
+            {
+              "source_tool": "get_repository_tree",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "Directory structure and file contents indicate clear separation of concerns.",
+              "relevance": "Tool: get_repository_tree, Tool: list_directory"
+            },
+            {
+              "source_tool": "read_file",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "Shared state management in `state.py`.",
+              "relevance": "Tool: read_file, File Path: state.py"
+            }
+          ],
+          "confidence": 0.95,
+          "category": "Modules",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null
+      },
+      {
+        "finding_title": "Agent Interactions",
+        "agent_type": "ARCHITECTURE",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Batch review mismatch",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Agent Interactions",
+          "description": "Agents interact through a central graph defined in `main_graph.py`, which routes the execution flow based on the current state.",
+          "evidence": [
+            {
+              "source_tool": "read_file",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "`main_graph.py` defines the graph structure and routing logic.",
+              "relevance": "Tool: read_file, File Path: main_graph.py"
+            },
+            {
+              "source_tool": "read_file",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "Agents are defined with specific functions that update the state based on their task.",
+              "relevance": "Tools: read_file, File Paths: gap_agent.py, interview_agent.py, job_agent.py"
+            }
+          ],
+          "confidence": 0.95,
+          "category": "Patterns",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null
+      },
+      {
+        "finding_title": "Entry Points",
+        "agent_type": "ARCHITECTURE",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Batch review mismatch",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Entry Points",
+          "description": "The execution starts from `main_graph.py` in the `__main__` block.",
+          "evidence": [
+            {
+              "source_tool": "get_entry_points",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "`main_graph.py` contains the main function that sets up the initial state and starts the execution flow.",
+              "relevance": ""
+            }
+          ],
+          "confidence": 0.95,
+          "category": "Entry Points",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null
+      },
+      {
+        "finding_title": "Startup Sequence and Initialization Process",
+        "agent_type": "EXECUTION_FLOW",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Batch review mismatch",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Startup Sequence and Initialization Process",
+          "description": "The application starts execution in `main_graph.py` at line 77, as indicated by the `if __name__ == '__main__':` block.",
+          "evidence": [
+            {
+              "source_tool": "get_entry_points",
+              "file_path": "main_graph.py (line 77)",
+              "line_numbers": "77",
+              "symbol": null,
+              "content": "The application starts execution in main_graph.py at line 77.",
+              "relevance": "This snippet confirms that the script is executed directly and sets up an initial state for processing."
+            },
+            {
+              "source_tool": "get_file_dependencies",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "Dependencies: AgentState from state.py, Agents (resume_agent, job_agent, gap_agent, roadmap_agent, interview_agent) from their respective files.",
+              "relevance": "The dependencies are clearly defined in the file."
+            }
+          ],
+          "confidence": 0.9,
+          "category": "Startup",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null
+      },
+      {
+        "finding_title": "Request Lifecycle Tracing",
+        "agent_type": "EXECUTION_FLOW",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Batch review mismatch",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Request Lifecycle Tracing",
+          "description": "The request lifecycle starts with user input (e.g., a resume and job description) and ends with a final response. Here’s how data flows through different components: User Input, Initialization of State, Graph Definition and Routing Logic, Node Invocation, Final Response.",
+          "evidence": [
+            {
+              "source_tool": "read_file",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "The entire request lifecycle from user input to final response is shown in the snippet.",
+              "relevance": "This snippet shows the entire request lifecycle from user input to final response."
+            }
+          ],
+          "confidence": 0.9,
+          "category": "Request Lifecycle",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null
+      },
+      {
+        "finding_title": "Communication Between Agents",
+        "agent_type": "EXECUTION_FLOW",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Batch review mismatch",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Communication Between Agents",
+          "description": "Agents (`gap_agent`, `interview_agent`, etc.) communicate through a graph structure defined in `main_graph.py`. Each agent processes data based on its specific role, and their interactions are managed by the routing logic.",
+          "evidence": [
+            {
+              "source_tool": "get_dependency_graph",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "The agents communicate through a defined graph structure, ensuring seamless data flow and processing.",
+              "relevance": "High connectivity of main_graph.py and the clear dependencies between files indicate a well-defined communication structure."
+            }
+          ],
+          "confidence": 0.95,
+          "category": "Communication",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null
+      },
+      {
+        "finding_title": "API Surface",
+        "agent_type": "API_DATA",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Batch review mismatch",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "API Surface",
+          "description": "No API endpoints were detected. This suggests that the system might be a standalone application or a microservice without exposed HTTP endpoints.",
+          "evidence": [
+            {
+              "source_tool": "get_api_endpoints",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "{}",
+              "relevance": "No API endpoints were detected."
+            }
+          ],
+          "confidence": 0.8,
+          "category": "API Surface",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null
+      },
+      {
+        "finding_title": "Data Models",
+        "agent_type": "API_DATA",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Batch review mismatch",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Data Models",
+          "description": "The repository contains several data model classes defined in `models/schemas.py` such as `ResumeData`, `JobData`, `GapData`, and `RoadmapData`.",
+          "evidence": [
+            {
+              "source_tool": "search_symbols",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "{\"name\": \"search_symbols\", \"arguments\": {\"query\": \"schemas\"}}",
+              "relevance": "Symbols related to data models were found."
+            }
+          ],
+          "confidence": 1.0,
+          "category": "Data Models",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null
+      },
+      {
+        "finding_title": "Database Interactions",
+        "agent_type": "API_DATA",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Batch review mismatch",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Database Interactions",
+          "description": "No direct database interactions were found in the provided symbols and dependency graph.",
+          "evidence": [
+            {
+              "source_tool": "get_dependency_graph",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "{\"name\": \"get_dependency_graph\", \"arguments\": {}}",
+              "relevance": "No direct database interactions were found."
+            }
+          ],
+          "confidence": 0.6,
+          "category": "Database",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null
+      },
+      {
+        "finding_title": "Middleware",
+        "agent_type": "API_DATA",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Batch review mismatch",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Middleware",
+          "description": "The `utils/llm.py` module contains utility functions for interacting with language models, which could be considered middleware.",
+          "evidence": [
+            {
+              "source_tool": "get_dependency_graph",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "{\"name\": \"get_dependency_graph\", \"arguments\": {}}",
+              "relevance": "Symbols related to utility functions were found."
+            }
+          ],
+          "confidence": 0.9,
+          "category": "Middleware",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null
+      },
+      {
+        "finding_title": "High-Level Architecture and Execution Flow",
+        "agent_type": "API_DATA",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Batch review mismatch",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "High-Level Architecture and Execution Flow",
+          "description": "The `main_graph.py` file appears to be the entry point of the application, importing various agent modules (`gap_agent`, `interview_agent`, `job_agent`, etc.) and possibly orchestrating their execution.",
+          "evidence": [
+            {
+              "source_tool": "get_dependency_graph",
+              "file_path": null,
+              "line_numbers": null,
+              "symbol": null,
+              "content": "{\"name\": \"get_dependency_graph\", \"arguments\": {}}",
+              "relevance": "Symbols related to the main execution flow were found."
+            }
+          ],
+          "confidence": 1.0,
+          "category": "API Surface (indirectly)",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null
+      },
+      {
+        "finding_title": "High-Level Architecture and Execution Flow",
+        "agent_type": "SETUP",
+        "verdict": "REJECTED",
+        "confidence": 1.0,
+        "reason": "Auto-rejected: No evidence provided.",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "High-Level Architecture and Execution Flow",
+          "description": "The repository `Multi-Agent-Placement-System` is primarily written in Python and contains modules for different agents. The main entry point of the application is identified, but no Docker configuration or environment variables are found.",
+          "evidence": [],
+          "confidence": 1.0,
+          "category": "Technology Stack",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null
+      },
+      {
+        "finding_title": "Entry Point",
+        "agent_type": "SETUP",
+        "verdict": "REJECTED",
+        "confidence": 1.0,
+        "reason": "Auto-rejected: No evidence provided.",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Entry Point",
+          "description": "The main execution block is located in `main_graph.py` at line 77, where the script checks if it's being run as the main module (`if __name__ == '__main__':`).",
+          "evidence": [],
+          "confidence": 1.0,
+          "category": "Entry Point",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null
+      },
+      {
+        "finding_title": "Environment Variables",
+        "agent_type": "SETUP",
+        "verdict": "REJECTED",
+        "confidence": 1.0,
+        "reason": "Auto-rejected: No evidence provided.",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Environment Variables",
+          "description": "No environment variables are detected in any configuration files or code.",
+          "evidence": [],
+          "confidence": 0.0,
+          "category": "Environment",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null
+      },
+      {
+        "finding_title": "Docker Configuration",
+        "agent_type": "SETUP",
+        "verdict": "REJECTED",
+        "confidence": 1.0,
+        "reason": "Auto-rejected: No evidence provided.",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Docker Configuration",
+          "description": "No `Dockerfile` was found in the repository directory structure.",
+          "evidence": [],
+          "confidence": 0.0,
+          "category": "Docker",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null
+      },
+      {
+        "finding_title": "Build System and Testing Frameworks",
+        "agent_type": "SETUP",
+        "verdict": "REJECTED",
+        "confidence": 1.0,
+        "reason": "Auto-rejected: No evidence provided.",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Build System and Testing Frameworks",
+          "description": "The project does not use a build system like Make, Gradle, or Maven, nor any testing frameworks such as PyTest, Unittest, or Nose.",
+          "evidence": [],
+          "confidence": 0.0,
+          "category": "Testing",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null
+      }
+    ],
+    "total_approved": 0,
+    "total_rejected": 5,
+    "total_uncertain": 12,
+    "overall_confidence": 0.29411764705882354,
+    "revision_count": 0,
+    "reviewed_at": "2026-08-01T13:49:45.123379Z"
+  },
+  "onboarding_guide": {
+    "role": "Backend Developer",
+    "repository_overview": {
+      "name": "Multi-Agent-Placement-System",
+      "description": "The repository `Multi-Agent-Placement-System` is a backend application primarily written in Python. It follows an agent-based architecture where multiple specialized agents handle different tasks. The system does not expose any API endpoints but operates as a standalone application, processing user inputs such as resumes and job descriptions to generate final responses.",
+      "languages": [
+        "Python"
+      ],
+      "frameworks": [],
+      "architecture_style": "Agent-Based",
+      "database": null,
+      "testing_framework": null,
+      "statistics": {
+        "total_files": 10,
+        "total_dirs": 4,
+        "total_source_files": 5,
+        "languages_breakdown": {
+          "Python": 5
+        },
+        "largest_dirs": {
+          "agents": 5608,
+          "models": 1751,
+          "utils": 123
+        }
+      }
+    },
+    "architecture_explanation": "The backend system follows an agent-based architecture where multiple specialized agents handle different tasks. The main components of the system include `state`, `agents`, `models`, and `utils`. These components interact through a central graph defined in `main_graph.py`, which routes the execution flow based on the current state.",
+    "architecture_diagram": "```mermaid\ngraph TD;\n    A[User Input] --> B[Initialization of State]\n    B --> C[Graph Definition and Routing Logic]\n    C --> D1(gap_agent)\n    C --> D2(interview_agent)\n    C --> D3(job_agent)\n    D1 --> E1[Process Data Based on Role]\n    D2 --> E2[Process Data Based on Role]\n    D3 --> E3[Process Data Based on Role]\n    E1 --> F1\n    E2 --> F2\n    E3 --> F3\n    F1 --> G1[Final Response]\n    F2 --> G2[Final Response]\n    F3 --> G3[Final Response]\n    G1 --> H[Output to User]\n    G2 --> H\n    G3 --> H\n```\n",
+    "folder_guide": [
+      {
+        "path": "C:\\Users\\pende\\AppData\\Local\\Temp\\repolens_nnmeqaxz\\agents",
+        "purpose": "Contains specialized agents that handle specific tasks such as processing resumes, job descriptions, and generating interview questions.",
+        "importance": "serves as the core of the agent-based architecture where each agent performs a distinct function.",
+        "read_first": false,
+        "evidence": []
+      },
+      {
+        "path": "C:\\Users\\pende\\AppData\\Local\\Temp\\repolens_nnmeqaxz\\models",
+        "purpose": "Holds data models and schema definitions for the application, including classes like `ResumeData`, `JobData`, etc.",
+        "importance": "is crucial for understanding how data is structured within the system.",
+        "read_first": true,
+        "evidence": []
+      },
+      {
+        "path": "C:\\Users\\pende\\AppData\\Local\\Temp\\repolens_nnmeqaxz\\utils",
+        "purpose": "Contains utility functions, including those related to language models in `llm.py`.",
+        "importance": "is important for understanding the support utilities available within the system.",
+        "read_first": false,
+        "evidence": []
+      },
+      {
+        "path": "C:\\Users\\pende\\AppData\\Local\\Temp\\repolens_nnmeqaxz\\main_graph.py",
+        "purpose": "The central entry point of the application where the execution flow is orchestrated through a graph structure.",
+        "importance": "is essential for understanding how different agents interact and the overall flow of data within the system.",
+        "read_first": true,
+        "evidence": []
+      },
+      {
+        "path": "C:\\Users\\pende\\AppData\\Local\\Temp\\repolens_nnmeqaxz\\state.py",
+        "purpose": "Manages the state of the application, which is crucial for understanding how data flows and changes throughout the execution.",
+        "importance": "is vital for grasping the state management within the system.",
+        "read_first": false,
+        "evidence": []
+      }
+    ],
+    "important_files": [
+      {
+        "rank": 1,
+        "file_path": "C:\\Users\\pende\\AppData\\Local\\Temp\\repolens_nnmeqaxz\\main_graph.py",
+        "purpose": "The main entry point of the application where the execution flow is orchestrated.",
+        "why_it_matters": "It defines how agents interact and the overall data flow.",
+        "dependencies": [],
+        "evidence": []
+      },
+      {
+        "rank": 2,
+        "file_path": "C:\\Users\\pende\\AppData\\Local\\Temp\\repolens_nnmeqaxz\\models\\schemas.py",
+        "purpose": "Contains data model definitions used throughout the application.",
+        "why_it_matters": "It provides a clear understanding of how data is structured and processed.",
+        "dependencies": [],
+        "evidence": []
+      },
+      {
+        "rank": 3,
+        "file_path": "C:\\Users\\pende\\AppData\\Local\\Temp\\repolens_nnmeqaxz\\agents\\gap_agent.py",
+        "purpose": "One of the specialized agents that processes gaps in a resume.",
+        "why_it_matters": "It exemplifies how individual agents contribute to the overall system.",
+        "dependencies": [],
+        "evidence": []
+      },
+      {
+        "rank": 4,
+        "file_path": "C:\\Users\\pende\\AppData\\Local\\Temp\\repolens_nnmeqaxz\\utils\\llm.py",
+        "purpose": "Contains utility functions for interacting with language models.",
+        "why_it_matters": "It highlights the use of external services and how they are integrated into the system.",
+        "dependencies": [],
+        "evidence": []
+      },
+      {
+        "rank": 5,
+        "file_path": "C:\\Users\\pende\\AppData\\Local\\Temp\\repolens_nnmeqaxz\\state.py",
+        "purpose": "Manages the state of the application.",
+        "why_it_matters": "It is crucial for understanding how data changes and flows within the system.",
+        "dependencies": [],
+        "evidence": []
+      }
+    ],
+    "execution_flows": [
+      {
+        "name": "Request Lifecycle",
+        "steps": [
+          {
+            "step": "incoming request",
+            "detail": "User inputs data such as a resume and job description."
+          },
+          {
+            "step": "state initialization",
+            "detail": "The state is initialized with the user input data."
+          },
+          {
+            "step": "graph definition and routing logic",
+            "detail": "The `main_graph.py` defines the graph structure and routing logic based on the current state."
+          },
+          {
+            "step": "node invocation",
+            "detail": "Nodes corresponding to specific agents (`gap_agent`, `interview_agent`, etc.) are invoked based on the defined routing logic."
+          },
+          {
+            "step": "agent processing",
+            "detail": "Each agent processes data according to its role and interacts with other agents through the graph structure."
+          },
+          {
+            "step": "final response generation",
+            "detail": "The final response is generated after all necessary processing steps have been completed."
+          }
+        ],
+        "mermaid_diagram": null,
+        "evidence": []
+      },
+      {
+        "name": "Data Processing Pipeline",
+        "steps": [
+          {
+            "step": "data input",
+            "detail": "User inputs data such as a resume and job description."
+          },
+          {
+            "step": "state initialization",
+            "detail": "The state is initialized with the user input data."
+          },
+          {
+            "step": "graph definition and routing logic",
+            "detail": "The `main_graph.py` defines the graph structure and routing logic based on the current state."
+          },
+          {
+            "step": "node invocation",
+            "detail": "Nodes corresponding to specific agents (`gap_agent`, `interview_agent`, etc.) are invoked based on the defined routing logic."
+          },
+          {
+            "step": "agent processing",
+            "detail": "Each agent processes data according to its role and interacts with other agents through the graph structure."
+          },
+          {
+            "step": "data transformation",
+            "detail": "Data is transformed as it passes through different agents, potentially including analysis, synthesis, or decision-making steps."
+          },
+          {
+            "step": "final response generation",
+            "detail": "The final response is generated after all necessary processing steps have been completed."
+          }
+        ],
+        "mermaid_diagram": null,
+        "evidence": []
+      }
+    ],
+    "api_explorer": [],
+    "reading_order": [],
+    "setup_guide": {
+      "installation_steps": [],
+      "environment_variables": [],
+      "run_commands": [],
+      "docker_instructions": null,
+      "testing_commands": [],
+      "evidence": []
+    },
+    "documentation_gaps": [
+      {
+        "gap_type": "Missing README",
+        "description": "The repository does not have a README.md file at the root.",
+        "severity": "high",
+        "affected_path": "README.md"
+      },
+      {
+        "gap_type": "Missing Tests",
+        "description": "No test directory or testing framework could be confidently identified.",
+        "severity": "high",
+        "affected_path": null
+      },
+      {
+        "gap_type": "Missing CONTRIBUTING.md",
+        "description": "No contribution guidelines provided for new developers.",
+        "severity": "low",
+        "affected_path": "CONTRIBUTING.md"
+      }
+    ],
+    "confidence_indicators": [
+      {
+        "section": "Overall Review",
+        "confidence": 0.29411764705882354,
+        "note": null
+      }
+    ],
+    "mental_model": "The repository `Multi-Agent-Placement-System` is a backend application primarily written in Python. It follows an agent-based architecture where multiple specialized agents handle different tasks. The system does not expose any API endpoints but operates as a standalone application, processing user inputs such as resumes and job descriptions to generate final responses.",
+    "generated_at": "2026-08-01T13:51:15.182777Z"
+  }
+}

@@ -87,7 +87,7 @@ class ChatWorkflowNodes:
                     content=f"New Finding: {finding.title}\n{finding.description}",
                     relevance_score=1.0,
                     section_name=f"New: {finding.title}",
-                    evidence=finding.evidence
+                    evidence=[e.content for e in finding.evidence] if finding.evidence else None
                 ))
         
         # Serialize fragments for the prompt

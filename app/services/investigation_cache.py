@@ -50,7 +50,7 @@ def load_investigation_result(repo_name: str, user_role: str, user_question: str
         with open(cache_file, "r", encoding="utf-8") as f:
             data = json.load(f)
             
-        result = InvestigationResult(**data)
+        result = InvestigationResult.model_validate(data)
         logger.info(f"Loaded investigation result from cache: {cache_file}")
         return result
         

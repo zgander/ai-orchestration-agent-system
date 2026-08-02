@@ -1,6 +1,6 @@
 import streamlit as st
 from app.models.chat_models import Citation, CitationType
-from app.ui.components.evidence_viewer import render_evidence
+
 
 def render_citation(citation: Citation):
     if citation.type == CitationType.SECTION:
