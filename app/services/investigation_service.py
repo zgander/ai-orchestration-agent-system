@@ -44,11 +44,10 @@ class InvestigationService:
         
         import asyncio
         try:
-            loop = asyncio.get_event_loop()
-            if loop.is_closed():
-                asyncio.set_event_loop(asyncio.new_event_loop())
+            loop = asyncio.get_running_loop()
         except RuntimeError:
-            asyncio.set_event_loop(asyncio.new_event_loop())
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
             
         # Execute workflow
         final_state = initial_state
@@ -61,9 +60,16 @@ class InvestigationService:
         end_time = datetime.now(timezone.utc)
         
         # Parse final state
-        plan = None
-        if final_state.get("investigation_plan"):
-            plan = InvestigationPlan(**json.loads(final_state["investigation_plan"]))
+        plan_json = final_state.get("investigation_plan")
+        if plan_json:
+            plan = InvestigationPlan(**json.loads(plan_json))
+        else:
+            plan = InvestigationPlan(
+                repository_name=analysis_result.repository_info.name,
+                tasks=[],
+                strategy="Unknown (state missing)",
+                created_at=start_time
+            )
             
         agent_reports = {}
         for key in ["architecture_report", "execution_flow_report", "api_data_report", "setup_report"]:

@@ -46,6 +46,13 @@ class Settings(BaseSettings):
     enable_mermaid_diagrams: bool = True
     default_onboarding_role: str = "Full Stack Developer"
 
+    # --- Phase 5: Chat ---
+    chat_cache_dir: str = ".repolens_cache/chat_sessions"
+    chat_memory_window_size: int = 20
+    chat_session_max_age_hours: int = 48
+    max_knowledge_fragments: int = 5
+    enable_reinvestigation: bool = False
+
     model_config = SettingsConfigDict(env_file=".env", env_prefix="REPOLENS_")
 
 settings = Settings()

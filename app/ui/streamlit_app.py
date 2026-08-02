@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 # Add project root to path for imports
-root_path = Path(__file__).parent.parent.parent.parent
+root_path = Path(__file__).parent.parent.parent
 if str(root_path) not in sys.path:
     sys.path.insert(0, str(root_path))
 
@@ -14,6 +14,8 @@ from app.ui.components.dashboard import render_dashboard
 from app.ui.components.investigation_dashboard import render_investigation_dashboard
 from app.ui.components.onboarding_guide import render_onboarding_guide
 from app.ui.components.reviewer_dashboard import render_reviewer_dashboard
+from app.ui.components.chat_page import render_chat_page
+from app.services.chat_service import ChatService
 from app.utils.logger import get_logger
 from app.tools.repository_tools import clear_tool_cache
 
@@ -23,6 +25,11 @@ logger = get_logger(__name__)
 @st.cache_resource
 def get_repository_service():
     return RepositoryService(settings)
+
+@st.cache_resource
+def get_chat_service():
+    from app.utils.llm_factory import LLMFactory
+    return ChatService(LLMFactory.get_llm(settings), settings)
 
 def load_css():
     css_path = Path(__file__).parent / "styles" / "custom.css"
@@ -48,7 +55,7 @@ def main():
         else:
             st.session_state.app_state = 'landing'
 
-    if st.session_state.app_state in ["dashboard", "investigation", "onboarding", "reviewer"]:
+    if st.session_state.app_state in ["dashboard", "investigation", "onboarding", "reviewer", "chat"]:
         with st.sidebar:
             st.title("RepoLens")
             if 'user_context' in st.session_state:
@@ -74,6 +81,10 @@ def main():
                     if st.button("🔍 Reviewer Dashboard", type="primary" if st.session_state.app_state == "reviewer" else "secondary"):
                         st.session_state.app_state = "reviewer"
                         st.rerun()
+                
+                if st.button("💬 Repository Chat", type="primary" if st.session_state.app_state == "chat" else "secondary"):
+                    st.session_state.app_state = "chat"
+                    st.rerun()
                 
             st.divider()
             if st.button("← Load New Repository"):
@@ -116,6 +127,12 @@ def main():
     elif st.session_state.app_state == "reviewer":
         if "investigation_result" in st.session_state and st.session_state.investigation_result.review_report:
             render_reviewer_dashboard(st.session_state.investigation_result.review_report)
+        else:
+            st.session_state.app_state = "investigation"
+            st.rerun()
+    elif st.session_state.app_state == "chat":
+        if "investigation_result" in st.session_state:
+            render_chat_page(get_chat_service())
         else:
             st.session_state.app_state = "investigation"
             st.rerun()
