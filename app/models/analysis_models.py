@@ -3,6 +3,8 @@ from typing import List, Dict, Optional, Any
 from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.models.repository import RepositoryInfo
+
 
 class FileNode(BaseModel):
     name: str
@@ -146,7 +148,7 @@ class RepositoryStatistics(BaseModel):
 
 
 class AnalysisResult(BaseModel):
-    repository_info: Any  # Resolves to RepositoryInfo in actual usage to avoid circular imports if separated, but we can just use dict or Any for now.
+    repository_info: RepositoryInfo
     tree: RepositoryTree
     tech_stack: TechStack
     entry_points: List[EntryPoint]
