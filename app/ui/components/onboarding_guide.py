@@ -16,61 +16,83 @@ def render_onboarding_guide(guide: OnboardingGuide):
     section = st.sidebar.radio(
         "Navigate",
         [
-            "Overview",
-            "Architecture",
-            "Folder Guide & Files",
-            "Execution Flows",
+            "Overview & Mental Model",
+            "Starting Point & Key Files",
+            "Architecture & Flows",
             "API Explorer",
-            "Reading Roadmap",
+            "Learning Roadmap",
             "Setup & Environment",
+            "Health & Pitfalls",
             "Documentation Gaps",
-            "Confidence Indicators"
         ]
     )
 
-    if section == "Overview":
+    if section == "Overview & Mental Model":
         _render_overview(guide)
-    elif section == "Architecture":
-        _render_architecture(guide)
-    elif section == "Folder Guide & Files":
-        _render_folders(guide)
-    elif section == "Execution Flows":
-        _render_execution_flows(guide)
+    elif section == "Starting Point & Key Files":
+        _render_starting_point(guide)
+    elif section == "Architecture & Flows":
+        _render_architecture_and_flows(guide)
     elif section == "API Explorer":
         _render_api_explorer(guide)
-    elif section == "Reading Roadmap":
+    elif section == "Learning Roadmap":
         _render_reading_roadmap(guide)
     elif section == "Setup & Environment":
         _render_setup(guide)
+    elif section == "Health & Pitfalls":
+        _render_health_and_pitfalls(guide)
     elif section == "Documentation Gaps":
         _render_gaps(guide)
-    elif section == "Confidence Indicators":
-        _render_confidence(guide)
 
 def _render_overview(guide: OnboardingGuide):
     st.header("Repository Overview")
     
-    st.info(f"**Mental Model:**\n\n{guide.mental_model}")
+    st.markdown("### Mental Model")
+    st.info(guide.mental_model)
     
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Languages", ", ".join(guide.repository_overview.languages) if guide.repository_overview.languages else "N/A")
-    col2.metric("Frameworks", ", ".join(guide.repository_overview.frameworks) if guide.repository_overview.frameworks else "N/A")
-    col3.metric("Architecture Style", guide.repository_overview.architecture_style)
+    st.markdown("### Repository at a Glance")
+    ro = guide.repository_overview
+    glance_data = {
+        "Project Type": ro.project_type,
+        "Primary Purpose": ro.primary_purpose,
+        "Architecture": ro.architecture_style,
+        "Complexity": ro.estimated_complexity,
+        "Est. Learning Time": f"{ro.estimated_learning_time_minutes} minutes" if getattr(ro, 'estimated_learning_time_minutes', 0) > 0 else "Unknown",
+        "Languages": ", ".join(ro.languages) if ro.languages else "N/A",
+        "Frameworks": ", ".join(ro.frameworks) if ro.frameworks else "N/A"
+    }
     
-    st.markdown("### Statistics")
-    stats = guide.repository_overview.statistics
-    st.json(stats)
+    df_glance = pd.DataFrame(list(glance_data.items()), columns=["Metric", "Value"])
+    st.table(df_glance)
 
-def _render_architecture(guide: OnboardingGuide):
-    st.header("Architecture Explanation")
-    st.markdown(guide.architecture_explanation)
-    
-    if guide.architecture_diagram:
-        st.subheader("Architecture Diagram")
-        render_mermaid(guide.architecture_diagram)
+    if getattr(ro, 'main_components', None):
+        st.markdown("**Main Components:**")
+        for comp in ro.main_components:
+            st.write(f"- {comp}")
 
-def _render_folders(guide: OnboardingGuide):
-    st.header("Folder Guide")
+    if hasattr(guide, 'ai_insights') and guide.ai_insights:
+        st.divider()
+        st.markdown("### 🤖 AI Insights")
+        for insight in guide.ai_insights:
+            st.write(f"- {insight}")
+
+def _render_starting_point(guide: OnboardingGuide):
+    st.header("Developer Starting Point")
+    
+    st.markdown("### Recommended First Files")
+    if guide.important_files:
+        for file in sorted(guide.important_files, key=lambda x: x.rank):
+            with st.expander(f"#{file.rank} - 📄 {file.file_path}", expanded=(file.rank <= 3)):
+                st.markdown(f"**Purpose:** {file.purpose}")
+                st.markdown(f"**Why it matters:** {file.why_it_matters}")
+                if getattr(file, 'dependencies', None):
+                    st.markdown(f"**Dependencies:** {', '.join(file.dependencies)}")
+                if file.evidence:
+                     render_evidence(file.evidence, expandable=False)
+    else:
+        st.info("No important files ranked.")
+
+    st.markdown("### Important Folders")
     for folder in guide.folder_guide:
         badge_color = "green" if folder.importance == "high" else "orange" if folder.importance == "medium" else "grey"
         read_badge = " **(Read First)**" if folder.read_first else ""
@@ -79,40 +101,16 @@ def _render_folders(guide: OnboardingGuide):
             st.markdown(folder.purpose)
             if folder.evidence:
                 render_evidence(folder.evidence, expandable=False)
-                
-    st.header("Important Files")
-    if guide.important_files:
-        for file in sorted(guide.important_files, key=lambda x: x.rank):
-            with st.expander(f"#{file.rank} - 📄 {file.file_path}"):
-                st.markdown(f"**Purpose:** {file.purpose}")
-                st.markdown(f"**Why it matters:** {file.why_it_matters}")
-                st.markdown(f"**Dependencies:** {', '.join(file.dependencies)}")
-                if file.evidence:
-                     render_evidence(file.evidence, expandable=False)
 
-def _render_execution_flows(guide: OnboardingGuide):
-    st.header("Execution Flows")
-    if not guide.execution_flows:
-        st.info("No execution flows generated.")
-        return
-        
-    flow_names = [f.name for f in guide.execution_flows]
-    selected_flow = st.selectbox("Select Flow to Explore", flow_names)
+def _render_architecture_and_flows(guide: OnboardingGuide):
+    st.header("Architecture & Flows")
+    st.write("For an interactive exploration, please use the **Architecture Explorer** and **Execution Flow** pages.")
     
-    for flow in guide.execution_flows:
-        if flow.name == selected_flow:
-            if flow.mermaid_diagram:
-                render_mermaid(flow.mermaid_diagram)
-                st.divider()
-                
-            st.subheader("Steps")
-            for idx, step in enumerate(flow.steps):
-                st.markdown(f"**{idx+1}. {step.get('component', 'Unknown Component')}**")
-                st.markdown(step.get('description', ''))
-                if step.get('file'):
-                    st.markdown(f"*File: `{step.get('file')}`*")
-                st.markdown("---")
-            break
+    if guide.architecture_diagram:
+        st.subheader("Architecture Diagram")
+        render_mermaid(guide.architecture_diagram)
+    
+    st.markdown(guide.architecture_explanation)
 
 def _render_api_explorer(guide: OnboardingGuide):
     st.header("API Explorer")
@@ -131,10 +129,18 @@ def _render_api_explorer(guide: OnboardingGuide):
     st.dataframe(pd.DataFrame(api_data), hide_index=True)
 
 def _render_reading_roadmap(guide: OnboardingGuide):
-    st.header(f"Reading Roadmap ({guide.role.value})")
+    st.header(f"Learning Roadmap ({guide.role.value})")
+    
+    if not guide.reading_order:
+        st.info("No reading roadmap available.")
+        return
+        
+    total_days = len(guide.reading_order)
+    st.progress(0, text=f"0 / {total_days} Steps Completed")
+    
     for day in sorted(guide.reading_order, key=lambda x: x.day):
-        with st.expander(f"Day {day.day}: {day.theme}", expanded=(day.day == 1)):
-            st.markdown("**Topics:**")
+        with st.expander(f"Step {day.day}: {day.theme}", expanded=(day.day == 1)):
+            st.markdown("**Topics to learn:**")
             for topic in day.topics:
                 st.markdown(f"- {topic}")
             st.markdown("**Files to read:**")
@@ -145,6 +151,8 @@ def _render_setup(guide: OnboardingGuide):
     st.header("Setup & Environment")
     
     st.subheader("Installation")
+    if not guide.setup_guide.installation_steps:
+        st.info("No installation steps detected.")
     for step in guide.setup_guide.installation_steps:
         st.markdown(f"- {step}")
         
@@ -164,9 +172,30 @@ def _render_setup(guide: OnboardingGuide):
     for cmd in guide.setup_guide.testing_commands:
         st.code(cmd, language="bash")
         
-    if guide.setup_guide.docker_instructions:
+    if getattr(guide.setup_guide, 'docker_instructions', None):
         st.subheader("Docker Instructions")
         st.markdown(guide.setup_guide.docker_instructions)
+
+def _render_health_and_pitfalls(guide: OnboardingGuide):
+    st.header("Health & Pitfalls")
+    
+    if hasattr(guide, 'repository_health') and guide.repository_health:
+        st.subheader("Repository Health")
+        for score in guide.repository_health:
+            icon = "✅" if score.score.lower() in ["good", "excellent", "high"] else "⚠️" if score.score.lower() in ["average", "medium", "fair"] else "❌"
+            st.markdown(f"**{icon} {score.category}: {score.score}**")
+            st.write(score.explanation)
+    else:
+        st.info("No health assessment available.")
+        
+    st.divider()
+    
+    if hasattr(guide, 'common_pitfalls') and guide.common_pitfalls:
+        st.subheader("Common Pitfalls & Gotchas")
+        for pitfall in guide.common_pitfalls:
+            st.warning(pitfall)
+    else:
+        st.success("No common pitfalls identified.")
 
 def _render_gaps(guide: OnboardingGuide):
     st.header("Documentation Gaps")
@@ -180,18 +209,6 @@ def _render_gaps(guide: OnboardingGuide):
         st.write(gap.description)
         if gap.affected_path:
             st.markdown(f"*Affected path: `{gap.affected_path}`*")
+            
+        st.markdown("**Recommended Action:** Address this gap to improve developer onboarding experience.")
         st.divider()
-
-def _render_confidence(guide: OnboardingGuide):
-    st.header("Confidence Indicators")
-    st.write("This shows the AI's confidence in the generated onboarding guide sections.")
-    
-    conf_data = []
-    for ind in guide.confidence_indicators:
-        conf_data.append({
-            "Section": ind.section,
-            "Confidence": f"{ind.confidence:.1%}",
-            "Status": "✅ Solid" if ind.confidence > 0.8 else "⚠️ Needs Review" if ind.confidence > 0.4 else "❌ Unreliable"
-        })
-        
-    st.table(pd.DataFrame(conf_data))

@@ -4,12 +4,13 @@ You must evaluate the finding based ONLY on the evidence provided in the report.
 
 CRITICAL RULES:
 1. Every claim made in the finding's description must be supported by the provided evidence.
-2. If evidence is missing or irrelevant, you MUST REJECT the finding.
+2. If evidence is missing or irrelevant, you MUST REJECT the finding and provide a recommendation for re-investigation.
 3. Check the confidence score. If it seems too high for the provided evidence, lower it or reject the finding.
-4. DO NOT hallucinate or assume any information that is not explicitly proven by the evidence.
-5. If the finding is perfectly valid, approve it.
+4. Cross-agent consistency: Validate each finding against findings from other agents. Explicitly flag any contradictions (e.g., Architecture agent says it's monolithic, but Setup agent says it deploys as microservices).
+5. DO NOT hallucinate or assume any information that is not explicitly proven by the evidence.
+6. If the finding is perfectly valid, approve it.
 
-You will receive a finding in JSON format. Provide your review as a structured output with a verdict (APPROVED, REJECTED), the reason for your verdict, and your own confidence in your decision.
+You will receive a finding (or a list of findings) in JSON format. Provide your review as a structured output with a verdict (APPROVED, REJECTED), the reason for your verdict, your confidence breakdown (repository evidence %, cross-agent agreement %, static analysis %, documentation %), and any contradictions or recommendations.
 """
 
 def build_reviewer_prompt(finding_json: str, agent_type: str) -> str:

@@ -1,5 +1,4 @@
-import json
-import signal
+
 import threading
 from datetime import datetime, timezone
 from typing import Dict, List, Any, Optional
@@ -13,12 +12,14 @@ from app.models.review_models import ReviewReport
 from app.models.onboarding_models import (
     OnboardingGuide, OnboardingRole, RepositoryOverview, FolderExplanation,
     ImportantFile, ExecutionFlow, APIEndpointGuide, ReadingOrderDay,
-    SetupGuide, ConfidenceIndicator
+    SetupGuide, ConfidenceIndicator, HealthScore, ArchitectureLayer, ComponentCard, DependencyInsight
 )
 from app.agents.prompts.synthesizer_prompt import (
     SYNTHESIZER_SYSTEM_PROMPT, build_overview_prompt, build_architecture_prompt,
     build_folder_guide_prompt, build_execution_flow_prompt,
-    build_reading_order_prompt, build_setup_guide_prompt
+    build_reading_order_prompt, build_setup_guide_prompt,
+    build_mental_model_prompt, build_ai_insights_prompt, build_health_assessment_prompt,
+    build_component_cards_prompt, build_architecture_layers_prompt
 )
 from app.analysis.gap_detector import GapDetector
 from app.config.settings import Settings
@@ -40,6 +41,11 @@ class OverviewOutput(BaseModel):
     architecture_style: str = Field(description="e.g. MVC, Microservices, Monolith")
     database: Optional[str] = Field(None, description="Database used, if any")
     testing_framework: Optional[str] = Field(None, description="Testing framework used, if any")
+    project_type: str = Field(description="Type of project")
+    primary_purpose: str = Field(description="Primary purpose of the project")
+    main_components: List[str] = Field(description="List of main components")
+    estimated_complexity: str = Field(description="Low, Medium, High")
+    estimated_learning_time_minutes: int = Field(description="Estimated learning time in minutes")
 
 class ArchitectureOutput(BaseModel):
     explanation: str = Field(description="High-level architecture explanation")
@@ -68,9 +74,27 @@ class SimpleFlowStep(BaseModel):
 class SimpleExecutionFlow(BaseModel):
     name: str = Field(description="Name of this execution flow")
     steps: List[SimpleFlowStep] = Field(description="Steps in this flow")
+    confidence: float = Field(description="Confidence from 0.0 to 1.0")
+    supporting_files: List[str] = Field(description="Files supporting this flow")
+    flow_type: str = Field(description="Startup | User Journey | Data Flow | Agent Collaboration")
 
 class ExecutionFlowsOutput(BaseModel):
     flows: List[SimpleExecutionFlow] = Field(description="Execution flows in the application")
+
+class MentalModelOutput(BaseModel):
+    mental_model: str = Field(description="How to think about the repository organization")
+
+class AIInsightsOutput(BaseModel):
+    insights: List[str] = Field(description="Intelligent architectural and execution insights")
+
+class HealthAssessmentOutput(BaseModel):
+    health_scores: List[HealthScore] = Field(description="Repository health assessment scores")
+
+class ComponentCardsOutput(BaseModel):
+    cards: List[ComponentCard] = Field(description="Component architecture cards")
+
+class ArchitectureLayersOutput(BaseModel):
+    layers: List[ArchitectureLayer] = Field(description="Logical architecture layers")
 
 class SimpleReadingDay(BaseModel):
     day: int = Field(description="Day number")
@@ -167,6 +191,11 @@ class SynthesizerAgent:
         exec_data = None
         reading_data = None
         setup_data = None
+        mental_data = None
+        insights_data = None
+        health_data = None
+        cards_data = None
+        layers_data = None
 
         def extract_overview():
             nonlocal overview_data
@@ -216,8 +245,38 @@ class SynthesizerAgent:
             )
             setup_data = self._extract(setup_prompt, SetupGuideOutput, "Setup Guide")
 
+        def extract_mental_model():
+            nonlocal mental_data
+            logger.info("[Synthesizer] Generating Mental Model...")
+            prompt = build_mental_model_prompt(findings_text, analysis_result.model_dump_json(include={'statistics'}))
+            mental_data = self._extract(prompt, MentalModelOutput, "Mental Model")
+
+        def extract_ai_insights():
+            nonlocal insights_data
+            logger.info("[Synthesizer] Generating AI Insights...")
+            prompt = build_ai_insights_prompt(findings_text)
+            insights_data = self._extract(prompt, AIInsightsOutput, "AI Insights")
+
+        def extract_health_assessment():
+            nonlocal health_data
+            logger.info("[Synthesizer] Generating Health Assessment...")
+            prompt = build_health_assessment_prompt(findings_text)
+            health_data = self._extract(prompt, HealthAssessmentOutput, "Health Assessment")
+
+        def extract_component_cards():
+            nonlocal cards_data
+            logger.info("[Synthesizer] Generating Component Cards...")
+            prompt = build_component_cards_prompt(findings_text)
+            cards_data = self._extract(prompt, ComponentCardsOutput, "Component Cards")
+
+        def extract_architecture_layers():
+            nonlocal layers_data
+            logger.info("[Synthesizer] Generating Architecture Layers...")
+            prompt = build_architecture_layers_prompt(findings_text)
+            layers_data = self._extract(prompt, ArchitectureLayersOutput, "Architecture Layers")
+
         logger.info(f"Synthesizer running parallel extractions...")
-        with ThreadPoolExecutor(max_workers=6) as executor:
+        with ThreadPoolExecutor(max_workers=10) as executor:
             futures = [
                 executor.submit(extract_overview),
                 executor.submit(extract_architecture),
@@ -225,6 +284,11 @@ class SynthesizerAgent:
                 executor.submit(extract_execution_flows),
                 executor.submit(extract_reading_order),
                 executor.submit(extract_setup_guide),
+                executor.submit(extract_mental_model),
+                executor.submit(extract_ai_insights),
+                executor.submit(extract_health_assessment),
+                executor.submit(extract_component_cards),
+                executor.submit(extract_architecture_layers),
             ]
             for future in futures:
                 future.result()  # Wait for all to complete
@@ -238,6 +302,11 @@ class SynthesizerAgent:
             architecture_style=overview_data.architecture_style if overview_data else "Unknown",
             database=overview_data.database if overview_data else None,
             testing_framework=overview_data.testing_framework if overview_data else None,
+            project_type=overview_data.project_type if overview_data else "Unknown",
+            primary_purpose=overview_data.primary_purpose if overview_data else "Unknown",
+            main_components=overview_data.main_components if overview_data else [],
+            estimated_complexity=overview_data.estimated_complexity if overview_data else "Unknown",
+            estimated_learning_time_minutes=overview_data.estimated_learning_time_minutes if overview_data else 0,
             statistics=analysis_result.statistics.model_dump()
         )
 
@@ -272,8 +341,21 @@ class SynthesizerAgent:
                 execution_flows.append(ExecutionFlow(
                     name=flow.name,
                     steps=[{"step": s.step, "detail": s.detail} for s in flow.steps],
-                    evidence=[]
+                    evidence=[],
+                    confidence=flow.confidence,
+                    supporting_files=flow.supporting_files,
+                    flow_type=flow.flow_type
                 ))
+        if not execution_flows:
+            # Fallback if no flows
+            execution_flows.append(ExecutionFlow(
+                name="Fallback Startup Flow",
+                steps=[{"step": "Start", "detail": "Application starts up based on entry points."}],
+                evidence=[],
+                confidence=0.1,
+                supporting_files=[ep.file_path for ep in analysis_result.entry_points],
+                flow_type="Startup"
+            ))
 
         # 5. API Explorer (Deterministic from AnalysisResult + Findings)
         # LLM extraction for this is often lossy, so we combine deterministically
@@ -326,11 +408,17 @@ class SynthesizerAgent:
 
         # Assemble Final Guide
         logger.info("[Synthesizer] Assembling final onboarding guide...")
+        
+        # Clean up mermaid fences
+        arch_diagram = arch_data.diagram if arch_data and self.settings.enable_mermaid_diagrams else None
+        if arch_diagram:
+            arch_diagram = arch_diagram.replace("```mermaid", "").replace("```", "").strip()
+
         return OnboardingGuide(
             role=role,
             repository_overview=repo_overview,
             architecture_explanation=arch_data.explanation if arch_data else "Failed to generate.",
-            architecture_diagram=arch_data.diagram if arch_data and self.settings.enable_mermaid_diagrams else None,
+            architecture_diagram=arch_diagram,
             folder_guide=folder_guide,
             important_files=important_files,
             execution_flows=execution_flows,
@@ -339,6 +427,12 @@ class SynthesizerAgent:
             setup_guide=setup_guide,
             documentation_gaps=gaps,
             confidence_indicators=conf_indicators,
-            mental_model=repo_overview.description,
+            mental_model=mental_data.mental_model if mental_data else repo_overview.description,
+            ai_insights=insights_data.insights if insights_data else [],
+            common_pitfalls=[gap.description for gap in gaps],
+            repository_health=health_data.health_scores if health_data else [],
+            architecture_layers=layers_data.layers if layers_data else [],
+            component_cards=cards_data.cards if cards_data else [],
+            dependency_insights=[],
             generated_at=datetime.now(timezone.utc)
         )

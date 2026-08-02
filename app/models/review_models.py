@@ -1,7 +1,7 @@
 from enum import Enum
 from datetime import datetime
 from typing import List, Optional
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.models.investigation_models import AgentFinding, AgentType
 
@@ -22,6 +22,7 @@ class FindingReview(BaseModel):
     revision_completed: bool = False
     original_finding: AgentFinding
     revised_finding: Optional[AgentFinding] = None
+    evidence_count: int = 0
 
     model_config = ConfigDict(frozen=True)
 
@@ -34,6 +35,8 @@ class ReviewReport(BaseModel):
     overall_confidence: float
     revision_count: int
     reviewed_at: datetime
+    contradictions: List[str] = Field(default_factory=list)
+    recommendations: List[str] = Field(default_factory=list)
 
     model_config = ConfigDict(frozen=True)
 

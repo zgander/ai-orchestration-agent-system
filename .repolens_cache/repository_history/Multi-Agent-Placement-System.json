@@ -2,7 +2,7 @@
   "name": "Multi-Agent-Placement-System",
   "url": "https://github.com/Manisharan28/Multi-Agent-Placement-System",
   "source_type": "GITHUB",
-  "root_path": "C:\\Users\\preet\\AppData\\Local\\Temp\\repolens_tvu4ibcb",
+  "root_path": "C:\\Users\\pende\\AppData\\Local\\Temp\\repolens_ihd82gv2",
   "tech_stack_summary": {
     "languages": [
       "Python"
@@ -10,9 +10,9 @@
     "frameworks": [],
     "databases": []
   },
-  "analysed_at": "2026-08-02T15:04:31.866427Z",
-  "last_accessed_at": "2026-08-02T15:04:31.873980Z",
+  "analysed_at": "2026-08-02T16:06:40.897221Z",
+  "last_accessed_at": "2026-08-02T16:06:40.916055Z",
   "investigation_status": "NOT_STARTED",
   "pinned": false,
-  "size_bytes": 48391
+  "size_bytes": 47481
 }

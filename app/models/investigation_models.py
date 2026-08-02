@@ -109,8 +109,8 @@ class InvestigationResult(BaseModel):
     started_at: datetime
     completed_at: datetime
     duration_seconds: float
-    review_report: Optional["ReviewReport"] = None
-    onboarding_guide: Optional["OnboardingGuide"] = None
+    review_report: Optional[Any] = None
+    onboarding_guide: Optional[Any] = None
     errors: List[str] = Field(default_factory=list)
 
     model_config = ConfigDict(frozen=True)
@@ -123,10 +123,4 @@ class TaskAssignment(BaseModel):
 class SupervisorPlanOutput(BaseModel):
     strategy: str = Field(description="Brief explanation of the overall investigation strategy")
     tasks: List[TaskAssignment] = Field(description="List of tasks assigned to specialist agents")
-
-# Rebuild models to resolve forward references for ReviewReport and OnboardingGuide
-from app.models.review_models import ReviewReport
-from app.models.onboarding_models import OnboardingGuide
-InvestigationResult.model_rebuild()
-
 

@@ -43,7 +43,8 @@ class ReviewerAgent:
                     verdict=ReviewVerdict.REJECTED,
                     confidence=1.0,
                     reason="Auto-rejected: No evidence provided.",
-                    original_finding=finding
+                    original_finding=finding,
+                    evidence_count=len(finding.evidence) if finding.evidence else 0
                 )))
                 continue
 
@@ -55,7 +56,8 @@ class ReviewerAgent:
                     verdict=ReviewVerdict.REJECTED,
                     confidence=1.0,
                     reason=f"Auto-rejected: Confidence score {finding.confidence} is below minimum threshold.",
-                    original_finding=finding
+                    original_finding=finding,
+                    evidence_count=len(finding.evidence) if finding.evidence else 0
                 )))
                 continue
                 
@@ -96,7 +98,8 @@ class ReviewerAgent:
                         verdict=llm_review.verdict,
                         confidence=llm_review.confidence,
                         reason=llm_review.reason,
-                        original_finding=finding
+                        original_finding=finding,
+                        evidence_count=len(finding.evidence) if finding.evidence else 0
                     )))
             else:
                 logger.warning("Batch review returned mismatched length. Falling back to UNCERTAIN.")
@@ -107,7 +110,8 @@ class ReviewerAgent:
                         verdict=ReviewVerdict.UNCERTAIN,
                         confidence=0.0,
                         reason="Batch review mismatch",
-                        original_finding=finding
+                        original_finding=finding,
+                        evidence_count=len(finding.evidence) if finding.evidence else 0
                     )))
                     
         except Exception as e:
@@ -120,7 +124,8 @@ class ReviewerAgent:
                     verdict=ReviewVerdict.UNCERTAIN,
                     confidence=0.0,
                     reason=f"LLM error: {e}",
-                    original_finding=finding
+                    original_finding=finding,
+                    evidence_count=len(finding.evidence) if finding.evidence else 0
                 )))
                 
         # Recombine and sort by original index

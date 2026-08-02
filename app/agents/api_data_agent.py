@@ -1,7 +1,7 @@
 from typing import List, Dict, Any
 
 from app.agents.base_agent import BaseAgent
-from app.models.investigation_models import AgentType, InvestigationTask
+from app.models.investigation_models import AgentType
 from app.agents.prompts.api_prompt import API_SYSTEM_PROMPT, build_api_prompt
 from app.config.settings import Settings
 

@@ -28,10 +28,39 @@ def render_arch_explorer_page():
             
         st.markdown("### Explanation")
         st.write(guide.architecture_explanation)
-        
+
+        if hasattr(guide, 'architecture_layers') and guide.architecture_layers:
+            st.markdown("### Architecture Layers")
+            for layer in sorted(guide.architecture_layers, key=lambda x: x.order):
+                with st.expander(f"Layer {layer.order}: {layer.name}", expanded=True):
+                    st.write(f"**Purpose:** {layer.purpose}")
+                    st.write(f"**Components:** {', '.join(layer.components)}")
+
+        if hasattr(guide, 'component_cards') and guide.component_cards:
+            st.markdown("### Component Cards")
+            for card in guide.component_cards:
+                with st.expander(f"🧩 {card.name}"):
+                    st.write(f"**Purpose:** {card.purpose}")
+                    if card.responsibilities:
+                        st.markdown("**Responsibilities:**")
+                        for resp in card.responsibilities:
+                            st.write(f"- {resp}")
+                    
+                    st.markdown("**Connections:**")
+                    conn_col1, conn_col2 = st.columns(2)
+                    with conn_col1:
+                        if card.consumes:
+                            st.write(f"**Consumes:** {', '.join(card.consumes)}")
+                        if card.dependencies:
+                            st.write(f"**Dependencies:** {', '.join(card.dependencies)}")
+                    with conn_col2:
+                        if card.produces:
+                            st.write(f"**Produces:** {', '.join(card.produces)}")
+                        if card.used_by:
+                            st.write(f"**Used By:** {', '.join(card.used_by)}")
+
     with col2:
-        st.markdown("### Folders by Architecture")
-        # We can map folders to their purposes as a proxy for components
+        st.markdown("### Folder Responsibilities")
         for folder in guide.folder_guide:
             if folder.importance in ["critical", "high"]:
                 with st.expander(f"📁 {folder.path}"):
@@ -43,3 +72,25 @@ def render_arch_explorer_page():
                         st.markdown("**APIs:**")
                         for api in folder_apis:
                             st.write(f"- `{api.method} {api.path}`")
+
+        if hasattr(guide, 'dependency_insights') and guide.dependency_insights:
+            st.markdown("### Dependency Insights")
+            for insight in guide.dependency_insights:
+                st.info(f"**{insight.insight_type}** ({insight.module}): {insight.explanation}")
+
+        if guide.reading_order:
+            st.markdown("### Suggested Reading Order")
+            for day in guide.reading_order:
+                with st.expander(f"Step {day.day}: {day.theme}"):
+                    for topic in day.topics:
+                        st.write(f"- {topic}")
+                    if day.files:
+                        st.markdown("**Key Files:**")
+                        for f in day.files:
+                            st.write(f"`{f}`")
+
+    if hasattr(guide, 'ai_insights') and guide.ai_insights:
+        st.divider()
+        st.markdown("### 🤖 AI Architecture Insights")
+        for insight in guide.ai_insights:
+            st.write(f"- {insight}")
