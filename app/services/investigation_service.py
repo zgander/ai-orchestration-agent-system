@@ -51,11 +51,17 @@ class InvestigationService:
             
         # Execute workflow
         final_state = initial_state
-        for state in self.workflow.stream(initial_state, stream_mode="values"):
-            final_state = state
-            if progress_callback and "timeline_events" in state:
-                events = [TimelineEvent(**json.loads(ev)) for ev in state["timeline_events"]]
-                progress_callback(events)
+        try:
+            for state in self.workflow.stream(initial_state, stream_mode="values"):
+                final_state = state
+                if progress_callback and "timeline_events" in state:
+                    events = [TimelineEvent(**json.loads(ev)) for ev in state["timeline_events"]]
+                    progress_callback(events)
+        except Exception as e:
+            logger.error(f"Investigation failed partially: {e}", exc_info=True)
+            if "errors" not in final_state:
+                final_state["errors"] = []
+            final_state["errors"].append(str(e))
                 
         end_time = datetime.now(timezone.utc)
         
@@ -98,5 +104,6 @@ class InvestigationService:
             completed_at=end_time,
             duration_seconds=time.time() - start_ts,
             review_report=review_report,
-            onboarding_guide=onboarding_guide
+            onboarding_guide=onboarding_guide,
+            errors=final_state.get("errors", [])
         )

@@ -93,7 +93,7 @@ class BaseAgent(ABC):
                     logger.info(f"Extracting structured JSON from {self.agent_type.value} output...")
                     structured_llm = self.llm.with_structured_output(FindingsOutput)
                     extraction_prompt = ChatPromptTemplate.from_messages([
-                        ("system", "Extract all findings from the provided text into the structured format. If no findings are present, return an empty list."),
+                        ("system", "Extract all findings from the provided text into the structured JSON format. CRITICAL: For each finding, you MUST extract the 'evidence' section into the nested 'evidence' array field. Each evidence item must map to the Evidence schema (source_tool, file_path, content, relevance). If no findings are present, return an empty list."),
                         ("human", "{text}")
                     ])
                     extractor = extraction_prompt | structured_llm

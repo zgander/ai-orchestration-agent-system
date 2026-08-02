@@ -19,6 +19,11 @@ def render_investigation_dashboard(analysis_result: AnalysisResult):
     if "investigation_result" in st.session_state:
         result: InvestigationResult = st.session_state.investigation_result
         
+        if hasattr(result, "errors") and result.errors:
+            st.error("Investigation completed partially with errors:")
+            for err in result.errors:
+                st.write(f"- {err}")
+                
         # Render static completed dashboard
         render_agent_cards(result.agent_reports)
         st.divider()
@@ -29,11 +34,14 @@ def render_investigation_dashboard(analysis_result: AnalysisResult):
         with col2:
             render_findings(result.agent_reports)
             
-        if st.button("📘 View Onboarding Guide", type="primary"):
-            st.session_state.app_state = "onboarding"
-            st.rerun()
+        if result.onboarding_guide:
+            if st.button("📘 View Onboarding Guide", type="primary"):
+                st.session_state.app_state = "onboarding"
+                st.rerun()
+        else:
+            st.warning("Onboarding guide was not generated due to incomplete investigation.")
 
-        if st.button("🔄 Rerun Investigation"):
+        if st.button("🔄 Restart Investigation"):
             clear_tool_cache()
             del st.session_state.investigation_result
             st.rerun()
