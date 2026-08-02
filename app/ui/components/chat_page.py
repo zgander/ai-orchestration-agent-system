@@ -7,8 +7,8 @@ from app.ui.components.code_viewer import render_code_viewer
 def render_chat_page(chat_service: ChatService):
     st.title("💬 Repository Chat")
     
-    repo_name = st.session_state.analysis_result.repository_info.name
-    repo_path = st.session_state.analysis_result.repository_info.root_path
+    repo_name = st.session_state.repository_info.name
+    repo_path = st.session_state.repository_info.local_path
     
     st.markdown(f"**repo:** `{repo_name}`")
     st.divider()

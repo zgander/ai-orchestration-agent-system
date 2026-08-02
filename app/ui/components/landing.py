@@ -5,7 +5,6 @@ import os
 import shutil
 
 from app.models.repository import SourceType, UserRole, UserContext
-from app.models.analysis_models import AnalysisResult
 from app.services.repository_service import RepositoryService
 from app.config.settings import settings
 
@@ -13,24 +12,6 @@ def render_landing(repo_service: RepositoryService):
     st.markdown('<h1 class="hero-title">RepoLens</h1>', unsafe_allow_html=True)
     st.markdown('<p class="hero-subtitle">AI-Powered Multi-Agent Codebase Onboarding Assistant</p>', unsafe_allow_html=True)
     
-    session_dir = Path(".repolens_cache/sessions")
-    if session_dir.exists() and (session_dir / "last_session.json").exists() and (session_dir / "last_context.json").exists():
-        st.success("🔄 A previous session was found. You can resume it without re-analysing.")
-        if st.button("Resume Previous Session", type="primary", use_container_width=True):
-            try:
-                with open(session_dir / "last_session.json", "r", encoding="utf-8") as f:
-                    data = f.read()
-                    st.session_state['analysis_result'] = AnalysisResult.model_validate_json(data)
-                
-                with open(session_dir / "last_context.json", "r", encoding="utf-8") as f:
-                    data = f.read()
-                    st.session_state['user_context'] = UserContext.model_validate_json(data)
-                    
-                st.session_state['app_state'] = 'dashboard'
-                st.rerun()
-            except Exception as e:
-                st.error(f"Failed to resume session: {e}")
-                
     st.markdown("---")
     
     col1, col2 = st.columns([2, 1])
@@ -93,14 +74,6 @@ def render_landing(repo_service: RepositoryService):
                 st.session_state['user_context'] = user_context
                 st.session_state['analysis_result'] = analysis_result
                 st.session_state['app_state'] = 'dashboard'
-                
-                # Save session for resuming after refresh
-                session_cache_dir = Path(".repolens_cache/sessions")
-                session_cache_dir.mkdir(parents=True, exist_ok=True)
-                with open(session_cache_dir / "last_session.json", "w", encoding="utf-8") as f:
-                    f.write(analysis_result.model_dump_json())
-                with open(session_cache_dir / "last_context.json", "w", encoding="utf-8") as f:
-                    f.write(user_context.model_dump_json())
                 
                 status.update(label="Analysis Complete!", state="complete", expanded=False)
                 st.rerun()

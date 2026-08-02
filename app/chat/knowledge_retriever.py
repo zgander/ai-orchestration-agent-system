@@ -35,7 +35,7 @@ class KnowledgeRetriever:
                         content=content,
                         relevance_score=0.9,
                         section_name=f"Execution Flow: {flow.name}",
-                        evidence=[e.content for e in flow.evidence] if flow.evidence else None
+                        evidence=flow.evidence
                     ))
             elif classification.category == QueryCategory.API:
                 content = "API Endpoints:\n"
@@ -66,7 +66,7 @@ class KnowledgeRetriever:
                     content=content,
                     relevance_score=0.9,
                     section_name="Setup Guide",
-                    evidence=[e.content for e in guide.setup_guide.evidence] if guide.setup_guide.evidence else None
+                    evidence=guide.setup_guide.evidence
                 ))
             elif classification.category == QueryCategory.GENERAL:
                 fragments.append(KnowledgeFragment(
@@ -96,7 +96,7 @@ class KnowledgeRetriever:
                             content=f"Finding ({agent_type.value}): {finding.title}\n{finding.description}",
                             relevance_score=score,
                             section_name=finding.title,
-                            evidence=[e.content for e in finding.evidence] if finding.evidence else None
+                            evidence=finding.evidence
                         ))
         
         # 3. Evidence Lookup

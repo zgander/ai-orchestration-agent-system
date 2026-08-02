@@ -46,6 +46,7 @@ class GapDetector:
         
         if not has_tests:
             # Check if testing framework was detected
+            testing_frameworks = getattr(analysis_result.tech_stack, "testing", []) # We need to check if testing framework is there based on tech stack
             testing_detected = False
             for framework in analysis_result.tech_stack.items:
                  if framework.category.value == "TESTING":

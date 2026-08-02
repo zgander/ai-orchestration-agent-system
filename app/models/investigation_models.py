@@ -122,9 +122,3 @@ class TaskAssignment(BaseModel):
 class SupervisorPlanOutput(BaseModel):
     strategy: str = Field(description="Brief explanation of the overall investigation strategy")
     tasks: List[TaskAssignment] = Field(description="List of tasks assigned to specialist agents")
-
-# Resolve forward references for serialization/deserialization
-from app.models.review_models import ReviewReport
-from app.models.onboarding_models import OnboardingGuide
-
-InvestigationResult.model_rebuild()
