@@ -4,13 +4,14 @@ from abc import ABC, abstractmethod
 from typing import List, Dict, Any
 from datetime import datetime, timezone
 import traceback
-import re
+
 
 from langchain_classic.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.messages import SystemMessage
 
 from app.models.investigation_models import (
-    AgentType, AgentStatus, InvestigationTask, AgentFinding, AgentReport, ToolResult
+    AgentType, AgentStatus, InvestigationTask, AgentFinding, AgentReport, ToolResult, FindingsOutput
 )
 from app.config.settings import Settings
 from app.utils.logger import get_logger
@@ -45,7 +46,7 @@ class BaseAgent(ABC):
         try:
             # We use tool-calling agent, it's more reliable than pure text ReAct
             prompt = ChatPromptTemplate.from_messages([
-                ("system", self.get_system_prompt()),
+                SystemMessage(content=self.get_system_prompt()),
                 ("human", "{input}"),
                 ("placeholder", "{agent_scratchpad}"),
             ])
@@ -86,24 +87,35 @@ class BaseAgent(ABC):
                 status = AgentStatus.FAILED
                 parsed_findings = []
             else:
-                # Log the exact raw output before any modifications
                 logger.debug(f"[{self.agent_type.value}] RAW LLM OUTPUT:\n{final_output}")
-
-                from app.utils.json_parser import extract_json_from_llm
-                sanitized_output = extract_json_from_llm(final_output, expected_type='list')
-                logger.debug(f"[{self.agent_type.value}] SANITIZED OUTPUT:\n{sanitized_output}")
-                        
+                
                 try:
-                    if not sanitized_output:
-                        raise ValueError("Sanitized JSON string is empty.")
-                    parsed_findings = json.loads(sanitized_output)
-                    for f in parsed_findings:
-                        findings.append(AgentFinding(**f))
+                    logger.info(f"Extracting structured JSON from {self.agent_type.value} output...")
+                    structured_llm = self.llm.with_structured_output(FindingsOutput)
+                    extraction_prompt = ChatPromptTemplate.from_messages([
+                        ("system", "Extract all findings from the provided text into the structured JSON format. CRITICAL: For each finding, you MUST extract the 'evidence' section into the nested 'evidence' array field. Each evidence item must map to the Evidence schema (source_tool, file_path, content, relevance). If no findings are present, return an empty list."),
+                        ("human", "{text}")
+                    ])
+                    extractor = extraction_prompt | structured_llm
+                    
+                    extracted = extractor.invoke({"text": final_output})
+                    
+                    if extracted and extracted.findings:
+                        for f in extracted.findings:
+                            findings.append(f)
+                    
                     status = AgentStatus.COMPLETED
                 except Exception as e:
-                    logger.error(f"Failed to parse JSON output from {self.agent_type.value}. Error: {e}\nRaw Output: {final_output}\nSanitized: {sanitized_output}")
-                    error_msg = f"Failed to parse findings JSON: {e}"
-                    status = AgentStatus.FAILED
+                    logger.error(f"Failed to extract structured JSON from {self.agent_type.value}. Error: {e}")
+                    fallback = AgentFinding(
+                        title="Agent Output (Extraction Error)",
+                        description=final_output.strip() if final_output else "No output",
+                        confidence=0.0,
+                        category="Unparsed",
+                        evidence=[]
+                    )
+                    findings.append(fallback)
+                    status = AgentStatus.COMPLETED
             
             # Mark tasks completed
             completed_tasks = []

@@ -1,0 +1,138 @@
+{
+  "session_id": "58d4f745-e43d-49bb-b48d-aa9bd22cfe98",
+  "repository_name": "Multi-Agent-Placement-System",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Do u have any previous converstion memory that?",
+      "citations": []
+    },
+    {
+      "role": "assistant",
+      "content": "I don't have enough information about that.\n\n[0] indicates there is no prior conversation history provided in the retrieved knowledge.",
+      "citations": [
+        {
+          "type": "section",
+          "reference": "Overview",
+          "display_text": "Overview"
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": "Okay My name is Manisharan. What is the entry point of this project",
+      "citations": []
+    },
+    {
+      "role": "assistant",
+      "content": "The entry point of the project `Multi-Agent-Placement-System` is located in the file `main_graph.py`. Specifically, it starts executing from line 77 within the `__name__ == '__main__':` block.\n\n[source_id: 1] [source_id: 2] [source_id: 3] [source_id: 4]",
+      "citations": [
+        {
+          "type": "section",
+          "reference": "Setup Guide",
+          "display_text": "Setup Guide"
+        },
+        {
+          "type": "finding",
+          "reference": "Entry Point",
+          "display_text": "Entry Point"
+        },
+        {
+          "type": "finding",
+          "reference": "Entry Points",
+          "display_text": "Entry Points"
+        },
+        {
+          "type": "finding",
+          "reference": "High-Level Architecture and Execution Flow",
+          "display_text": "High-Level Architecture and Execution Flow"
+        },
+        {
+          "type": "finding",
+          "reference": "High-Level Architecture and Execution Flow",
+          "display_text": "High-Level Architecture and Execution Flow"
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": "okay what is my name?",
+      "citations": []
+    },
+    {
+      "role": "assistant",
+      "content": "Your name is Manisharan. [source_id: 0]",
+      "citations": [
+        {
+          "type": "section",
+          "reference": "Overview",
+          "display_text": "Overview"
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": "soo what is the workflow of this project?",
+      "citations": []
+    },
+    {
+      "role": "assistant",
+      "content": "The workflow of the `Multi-Agent-Placement-System` can be described as follows:\n\n1. **Data Input**: The user inputs data such as a resume and job description.\n2. **State Initialization**: The state is initialized with the provided user input data.\n3. **Graph Definition and Routing Logic**: The `main_graph.py` file defines the graph structure and routing logic based on the current state.\n4. **Node Invocation**: Nodes corresponding to specific agents (e.g., `gap_agent`, `interview_agent`, etc.) are invoked according to the defined routing logic.\n5. **Agent Processing**: Each agent processes data according to its role and interacts with other agents through the graph structure.\n6. **Final Response Generation**: After all necessary processing steps have been completed, the final response is generated.\n\nThis workflow ensures that the system can dynamically route and process user inputs through a network of interconnected agents, ultimately producing an appropriate output based on the input data and the defined logic.\n\n[source_id: 0] [source_id: 1] [source_id: 2]",
+      "citations": [
+        {
+          "type": "section",
+          "reference": "Execution Flow: Request Lifecycle",
+          "display_text": "Execution Flow: Request Lifecycle"
+        },
+        {
+          "type": "section",
+          "reference": "Execution Flow: Data Processing Pipeline",
+          "display_text": "Execution Flow: Data Processing Pipeline"
+        },
+        {
+          "type": "finding",
+          "reference": "API Surface",
+          "display_text": "API Surface"
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": "How many agents are in this project and give little details about them",
+      "citations": []
+    },
+    {
+      "role": "assistant",
+      "content": "The `Multi-Agent-Placement-System` includes several specialized agents that handle different tasks. Here is a brief overview of each agent:\n\n1. **gap_agent.py**: This agent likely deals with calculating or suggesting gaps in the user's resume, such as identifying skills or experiences that might be missing.\n\n2. **interview_agent.py**: This agent probably focuses on preparing the user for interviews by providing tips, questions, and advice based on the job description provided.\n\n3. **job_agent.py**: This agent could be responsible for analyzing the job requirements and matching them with the user's resume to suggest suitable jobs or highlight relevant experiences.\n\n4. **resume_agent.py**: This agent might handle the initial processing of the user's resume, extracting key information like skills, education, and work experience.\n\n5. **roadmap_agent.py**: This agent could provide a career development roadmap based on the user's current situation and goals, suggesting steps to improve their profile or achieve specific objectives.\n\nThese agents interact through a central graph defined in `main_graph.py`, which routes the execution flow based on the current state of the system [source_id: 3].\n\n[source_id: 1] [source_id: 2] [source_id: 3] [source_id: 4]",
+      "citations": [
+        {
+          "type": "section",
+          "reference": "Overview",
+          "display_text": "Overview"
+        },
+        {
+          "type": "finding",
+          "reference": "Architecture Style",
+          "display_text": "Architecture Style"
+        },
+        {
+          "type": "finding",
+          "reference": "Main Components and Their Relationships",
+          "display_text": "Main Components and Their Relationships"
+        },
+        {
+          "type": "finding",
+          "reference": "Agent Interactions",
+          "display_text": "Agent Interactions"
+        },
+        {
+          "type": "finding",
+          "reference": "Communication Between Agents",
+          "display_text": "Communication Between Agents"
+        }
+      ]
+    }
+  ],
+  "created_at": "2026-08-02T06:04:11.805172Z",
+  "updated_at": "2026-08-02T06:06:01.917940Z"
+}

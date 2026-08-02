@@ -4,7 +4,6 @@ from typing import Optional, Callable
 import time
 
 from langchain_core.language_models.chat_models import BaseChatModel
-from langchain_openai import ChatOpenAI
 
 from app.models.analysis_models import AnalysisResult
 from app.models.investigation_models import InvestigationResult, InvestigationPlan, AgentReport, TimelineEvent
@@ -43,20 +42,40 @@ class InvestigationService:
             "errors": []
         }
         
+        import asyncio
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            
         # Execute workflow
         final_state = initial_state
-        for state in self.workflow.stream(initial_state, stream_mode="values"):
-            final_state = state
-            if progress_callback and "timeline_events" in state:
-                events = [TimelineEvent(**json.loads(ev)) for ev in state["timeline_events"]]
-                progress_callback(events)
+        try:
+            for state in self.workflow.stream(initial_state, stream_mode="values"):
+                final_state = state
+                if progress_callback and "timeline_events" in state:
+                    events = [TimelineEvent(**json.loads(ev)) for ev in state["timeline_events"]]
+                    progress_callback(events)
+        except Exception as e:
+            logger.error(f"Investigation failed partially: {e}", exc_info=True)
+            if "errors" not in final_state:
+                final_state["errors"] = []
+            final_state["errors"].append(str(e))
                 
         end_time = datetime.now(timezone.utc)
         
         # Parse final state
-        plan = None
-        if final_state.get("investigation_plan"):
-            plan = InvestigationPlan(**json.loads(final_state["investigation_plan"]))
+        plan_json = final_state.get("investigation_plan")
+        if plan_json:
+            plan = InvestigationPlan(**json.loads(plan_json))
+        else:
+            plan = InvestigationPlan(
+                repository_name=analysis_result.repository_info.name,
+                tasks=[],
+                strategy="Unknown (state missing)",
+                created_at=start_time
+            )
             
         agent_reports = {}
         for key in ["architecture_report", "execution_flow_report", "api_data_report", "setup_report"]:
@@ -67,11 +86,24 @@ class InvestigationService:
                 
         timeline = [TimelineEvent(**json.loads(ev)) for ev in final_state.get("timeline_events", [])]
         
+        from app.models.review_models import ReviewReport
+        review_report = None
+        if final_state.get("review_report"):
+             review_report = ReviewReport(**json.loads(final_state["review_report"]))
+
+        from app.models.onboarding_models import OnboardingGuide
+        onboarding_guide = None
+        if final_state.get("onboarding_guide"):
+             onboarding_guide = OnboardingGuide(**json.loads(final_state["onboarding_guide"]))
+        
         return InvestigationResult(
             plan=plan,
             agent_reports=agent_reports,
             timeline=timeline,
             started_at=start_time,
             completed_at=end_time,
-            duration_seconds=time.time() - start_ts
+            duration_seconds=time.time() - start_ts,
+            review_report=review_report,
+            onboarding_guide=onboarding_guide,
+            errors=final_state.get("errors", [])
         )

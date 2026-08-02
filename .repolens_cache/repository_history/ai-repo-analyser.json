@@ -1,0 +1,26 @@
+{
+  "name": "ai-repo-analyser",
+  "url": "https://github.com/zgander/ai-repo-analyser",
+  "source_type": "GITHUB",
+  "root_path": "C:\\Users\\preet\\AppData\\Local\\Temp\\repolens_771iuwvl",
+  "tech_stack_summary": {
+    "languages": [
+      "JavaScript",
+      "HTML",
+      "TypeScript",
+      "CSS"
+    ],
+    "frameworks": [
+      "React",
+      "Express"
+    ],
+    "databases": [
+      "MongoDB"
+    ]
+  },
+  "analysed_at": "2026-08-02T14:51:49.795793Z",
+  "last_accessed_at": "2026-08-02T14:51:49.806870Z",
+  "investigation_status": "NOT_STARTED",
+  "pinned": false,
+  "size_bytes": 506948
+}

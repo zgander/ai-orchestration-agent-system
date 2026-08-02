@@ -10,6 +10,7 @@ from app.config.settings import Settings
 from app.ui.components.agent_cards import render_agent_cards
 from app.ui.components.timeline_view import render_timeline
 from app.ui.components.findings_view import render_findings
+from app.tools.repository_tools import clear_tool_cache
 
 def render_investigation_dashboard(analysis_result: AnalysisResult):
     st.title(f"🤖 AI Investigation: {analysis_result.repository_info.name}")
@@ -18,6 +19,11 @@ def render_investigation_dashboard(analysis_result: AnalysisResult):
     if "investigation_result" in st.session_state:
         result: InvestigationResult = st.session_state.investigation_result
         
+        if hasattr(result, "errors") and result.errors:
+            st.error("Investigation completed partially with errors:")
+            for err in result.errors:
+                st.write(f"- {err}")
+                
         # Render static completed dashboard
         render_agent_cards(result.agent_reports)
         st.divider()
@@ -28,7 +34,15 @@ def render_investigation_dashboard(analysis_result: AnalysisResult):
         with col2:
             render_findings(result.agent_reports)
             
-        if st.button("🔄 Rerun Investigation"):
+        if result.onboarding_guide:
+            if st.button("📘 View Onboarding Guide", type="primary"):
+                st.session_state.app_state = "onboarding"
+                st.rerun()
+        else:
+            st.warning("Onboarding guide was not generated due to incomplete investigation.")
+
+        if st.button("🔄 Restart Investigation"):
+            clear_tool_cache()
             del st.session_state.investigation_result
             st.rerun()
             
@@ -50,8 +64,30 @@ def render_investigation_dashboard(analysis_result: AnalysisResult):
             settings = Settings()
             service = InvestigationService(settings)
             
+            from app.services.investigation_cache import load_investigation_result, save_investigation_result
+            user_role = st.session_state.user_context.role.value if 'user_context' in st.session_state else "Full Stack Developer"
+            user_question = st.session_state.user_context.question if 'user_context' in st.session_state and st.session_state.user_context.question else "Give me a comprehensive overview of the architecture and execution flow."
+            
+            cached_result = load_investigation_result(analysis_result.repository_info.name, user_role, user_question)
+            
+            if cached_result:
+                st.info("A recent investigation for this repository and query was found.")
+                col1, col2 = st.columns(2)
+                with col1:
+                    if st.button("Load Cached Result", type="primary"):
+                        st.session_state.investigation_result = cached_result
+                        if cached_result.onboarding_guide:
+                            st.session_state.app_state = "onboarding"
+                        st.rerun()
+                with col2:
+                    if not st.button("Run New Investigation"):
+                        return
+                    
             with status_placeholder.status("Running AI Investigation...", expanded=True) as status:
                 st.write("Initializing...")
+                
+                from app.tools.cache_utils import preseed_tool_cache
+                preseed_tool_cache(analysis_result)
                 
                 # We need a closure to capture timeline events and update the UI
                 timeline_events = []
@@ -64,29 +100,41 @@ def render_investigation_dashboard(analysis_result: AnalysisResult):
                     with timeline_placeholder.container():
                         render_timeline(timeline_events)
                         
+                    # Track which agents have completed
+                    completed_agents = set()
+                    for ev in events:
+                        if "completed" in ev.event.lower():
+                            completed_agents.add(ev.agent_type)
+                            
                     # Update status text
                     if events:
                         latest = events[-1]
                         st.write(f"{latest.agent_type.value}: {latest.event}")
                         
-                        # Update cards (we don't have full reports mid-flight in this simple callback,
-                        # but we can highlight the running agent)
+                        # Update cards
                         with cards_placeholder.container():
-                            render_agent_cards({}, current_running=latest.agent_type)
+                            render_agent_cards({}, current_running=latest.agent_type, completed_agents=completed_agents)
                 
                 # Run the investigation blocking
                 # The callback will be called synchronously during the run
                 result = service.investigate(
                     analysis_result=analysis_result,
-                    user_role="Senior Software Engineer",
-                    user_question="Give me a comprehensive overview of the architecture and execution flow.",
+                    user_role=user_role,
+                    user_question=user_question,
                     progress_callback=progress_callback
                 )
                 
                 status.update(label="Investigation Complete", state="complete", expanded=False)
                 
-            # Save to session state and rerun to show final static view
+            save_investigation_result(analysis_result.repository_info.name, user_role, user_question, result)
+                
+            # Save to session state
             st.session_state.investigation_result = result
+            
+            # If onboarding guide was generated successfully, navigate to it automatically
+            if result.onboarding_guide:
+                st.session_state.app_state = "onboarding"
+                
             st.rerun()
             
         except Exception as e:

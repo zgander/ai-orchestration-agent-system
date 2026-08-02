@@ -3,56 +3,23 @@ import json
 from pathlib import Path
 from langchain_core.tools import tool
 
-from app.analysis.tree_builder import TreeBuilder
+
 from app.config.settings import Settings
 from app.utils.file_utils import safe_read_text, find_files
 
 # Global cache for expensive tool calls per investigation session
+import threading
+_CACHE_LOCK = threading.Lock()
 _TOOL_CACHE = {}
 
 def clear_tool_cache():
     global _TOOL_CACHE
-    _TOOL_CACHE.clear()
+    with _CACHE_LOCK:
+        _TOOL_CACHE.clear()
 
 from app.tools.tool_context import get_root_path
 
-@tool
-def get_repository_tree() -> str:
-    """
-    Returns a summary of the repository directory structure.
-    Use this to understand the high-level layout of the project, important folders, and where source code lives.
-    """
-    root_path = get_root_path()
-    cache_key = ("tree", root_path)
-    if cache_key in _TOOL_CACHE:
-        return _TOOL_CACHE[cache_key]
 
-    builder = TreeBuilder(Settings())
-    tree = builder.analyse(Path(root_path))
-    
-    # We serialize just the top levels to avoid blowing up context window
-    def _node_to_dict(node, max_depth=3):
-        if node.depth > max_depth:
-            return {"name": node.name, "is_dir": node.is_dir, "omitted": True}
-        result = {
-            "name": node.name,
-            "is_dir": node.is_dir,
-            "size": node.size
-        }
-        if node.is_dir and node.children:
-            result["children"] = [_node_to_dict(c, max_depth) for c in node.children]
-        return result
-        
-    summary = {
-        "total_files": tree.total_files,
-        "total_dirs": tree.total_dirs,
-        "max_depth": tree.max_depth,
-        "root": _node_to_dict(tree.root)
-    }
-    
-    res = json.dumps(summary, indent=2)
-    _TOOL_CACHE[cache_key] = res
-    return res
 
 @tool
 def read_file(file_path: str) -> str:

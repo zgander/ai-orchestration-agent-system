@@ -35,52 +35,83 @@ def render_landing(repo_service: RepositoryService):
         
     st.markdown("---")
     
-    if st.button("🔍 Analyse Repository", use_container_width=True, type="primary"):
-        if source_mode == "GitHub URL" and not url_input:
-            st.error("Please enter a GitHub URL.")
-            return
-        if source_mode == "ZIP Upload" and not uploaded_file:
-            st.error("Please upload a ZIP file.")
-            return
-            
-        with st.status("Analysing Repository...", expanded=True) as status:
-            temp_dir = Path(tempfile.mkdtemp(prefix="repolens_"))
-            st.session_state['temp_dir'] = temp_dir
-            
-            try:
-                # 1. Ingest
-                st.write("📥 Ingesting repository...")
-                if source_mode == "GitHub URL":
-                    repo_info = repo_service.ingest(SourceType.GITHUB, url_input, temp_dir)
-                else:
-                    # Save uploaded file to temp
-                    zip_path = temp_dir / uploaded_file.name
-                    with open(zip_path, "wb") as f:
-                        f.write(uploaded_file.getbuffer())
+    col_btn, col_hist = st.columns([2, 1])
+    with col_btn:
+        if st.button("🔍 Analyse Repository", type="primary", use_container_width=True):
+            if source_mode == "GitHub URL" and not url_input:
+                st.error("Please enter a GitHub URL.")
+                return
+            if source_mode == "ZIP Upload" and not uploaded_file:
+                st.error("Please upload a ZIP file.")
+                return
+                
+            with st.status("Analysing Repository...", expanded=True) as status:
+                temp_dir = Path(tempfile.mkdtemp(prefix="repolens_"))
+                st.session_state['temp_dir'] = temp_dir
+                
+                try:
+                    # 1. Ingest
+                    st.write("📥 Ingesting repository...")
+                    if source_mode == "GitHub URL":
+                        repo_info = repo_service.ingest(SourceType.GITHUB, url_input, temp_dir)
+                    else:
+                        # Save uploaded file to temp
+                        zip_path = temp_dir / uploaded_file.name
+                        with open(zip_path, "wb") as f:
+                            f.write(uploaded_file.getbuffer())
+                        
+                        extract_dir = temp_dir / "extracted"
+                        extract_dir.mkdir()
+                        repo_info = repo_service.ingest(SourceType.ZIP, zip_path, extract_dir)
+                        
+                    # 2. Analyse
+                    st.write(f"🔬 Analysing {repo_info.name}...")
+                    analysis_result = repo_service.analyse(repo_info)
                     
-                    extract_dir = temp_dir / "extracted"
-                    extract_dir.mkdir()
-                    repo_info = repo_service.ingest(SourceType.ZIP, zip_path, extract_dir)
+                    # 3. Save to history
+                    from app.services.repository_history import RepositoryHistoryService
+                    from app.models.history_models import RepositoryMetadata, RepositoryInvestigationStatus
+                    history_service = RepositoryHistoryService()
                     
-                # 2. Analyse
-                st.write(f"🔬 Analysing {repo_info.name}...")
-                analysis_result = repo_service.analyse(repo_info)
-                
-                # Save context
-                user_context = UserContext(
-                    role=UserRole(role),
-                    question=question if question else None
-                )
-                st.session_state['user_context'] = user_context
-                st.session_state['analysis_result'] = analysis_result
-                st.session_state['app_state'] = 'dashboard'
-                
-                status.update(label="Analysis Complete!", state="complete", expanded=False)
-                st.rerun()
-                
-            except Exception as e:
-                status.update(label="Analysis Failed", state="error")
-                st.error(f"Error during analysis: {str(e)}")
-                # Cleanup on failure
-                if temp_dir.exists():
-                    shutil.rmtree(temp_dir, ignore_errors=True)
+                    # Extract a simplified tech stack summary for history
+                    tech_stack_summary = {
+                        "languages": [l.name for l in analysis_result.tech_stack.languages],
+                        "frameworks": [f.name for f in analysis_result.tech_stack.frameworks],
+                        "databases": [d.name for d in analysis_result.tech_stack.databases]
+                    }
+                    
+                    metadata = RepositoryMetadata(
+                        name=repo_info.name,
+                        url=repo_info.source.url,
+                        source_type=repo_info.source.source_type.value,
+                        root_path=repo_info.root_path,
+                        tech_stack_summary=tech_stack_summary,
+                        analysed_at=analysis_result.analysed_at,
+                        size_bytes=repo_info.size_bytes,
+                        investigation_status=RepositoryInvestigationStatus.NOT_STARTED
+                    )
+                    history_service.save_repository(metadata)
+                    
+                    # Save context
+                    user_context = UserContext(
+                        role=UserRole(role),
+                        question=question if question else None
+                    )
+                    st.session_state['user_context'] = user_context
+                    st.session_state['analysis_result'] = analysis_result
+                    st.session_state['app_state'] = 'repo_dashboard'
+                    
+                    status.update(label="Analysis Complete!", state="complete", expanded=False)
+                    st.rerun()
+                    
+                except Exception as e:
+                    status.update(label="Analysis Failed", state="error")
+                    st.error(f"Error during analysis: {str(e)}")
+                    # Cleanup on failure
+                    if temp_dir.exists():
+                        shutil.rmtree(temp_dir, ignore_errors=True)
+                        
+    with col_hist:
+        if st.button("📚 Repository History", use_container_width=True):
+            st.session_state.app_state = "history"
+            st.rerun()

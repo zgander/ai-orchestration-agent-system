@@ -1,16 +1,20 @@
 import streamlit as st
-from typing import Dict, Optional
+from typing import Dict, Optional, Set
 
 from app.models.investigation_models import AgentType, AgentReport, AgentStatus
 
-def render_agent_cards(agent_reports: Dict[AgentType, AgentReport], current_running: Optional[AgentType] = None):
-    cols = st.columns(4)
+def render_agent_cards(agent_reports: Dict[AgentType, AgentReport], current_running: Optional[AgentType] = None, completed_agents: Optional[Set[AgentType]] = None):
+    if completed_agents is None:
+        completed_agents = set()
+    cols = st.columns(6)
     
     agents = [
         (AgentType.ARCHITECTURE, "🏗️ Arch", cols[0]),
         (AgentType.EXECUTION_FLOW, "🔄 Exec", cols[1]),
         (AgentType.API_DATA, "🌐 API", cols[2]),
-        (AgentType.SETUP, "⚙️ Setup", cols[3])
+        (AgentType.SETUP, "⚙️ Setup", cols[3]),
+        (AgentType.REVIEWER, "🔍 Review", cols[4]),
+        (AgentType.SYNTHESIZER, "📘 Synth", cols[5])
     ]
     
     for agent_type, title, col in agents:
@@ -22,10 +26,10 @@ def render_agent_cards(agent_reports: Dict[AgentType, AgentReport], current_runn
                 status_color = "red"
                 status_text = "Failed"
                 detail = "Check errors"
-            elif report and report.status == AgentStatus.COMPLETED:
+            elif (report and report.status == AgentStatus.COMPLETED) or (agent_type in completed_agents):
                 status_color = "green"
                 status_text = "Completed"
-                detail = f"{len(report.findings)} findings"
+                detail = f"{len(report.findings)} findings" if report else "Findings ready"
             elif agent_type == current_running or (report and report.status == AgentStatus.RUNNING):
                 status_color = "blue"
                 status_text = "Running"
