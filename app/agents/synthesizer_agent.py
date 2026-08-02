@@ -90,11 +90,26 @@ class AIInsightsOutput(BaseModel):
 class HealthAssessmentOutput(BaseModel):
     health_scores: List[HealthScore] = Field(description="Repository health assessment scores")
 
+class SimpleComponentCard(BaseModel):
+    name: str = Field(description="Component name")
+    purpose: str = Field(description="Component purpose")
+    responsibilities: List[str] = Field(description="What this component is responsible for")
+    consumes: List[str] = Field(description="What data or services it consumes")
+    produces: List[str] = Field(description="What data or services it produces")
+    dependencies: List[str] = Field(description="Other components it depends on")
+    used_by: List[str] = Field(description="Other components that use this")
+
 class ComponentCardsOutput(BaseModel):
-    cards: List[ComponentCard] = Field(description="Component architecture cards")
+    cards: List[SimpleComponentCard] = Field(description="Component architecture cards")
+
+class SimpleArchitectureLayer(BaseModel):
+    name: str = Field(description="Layer name")
+    purpose: str = Field(description="Layer purpose")
+    components: List[str] = Field(description="Components in this layer")
+    order: int = Field(description="Layer order (1 = top/presentation layer)")
 
 class ArchitectureLayersOutput(BaseModel):
-    layers: List[ArchitectureLayer] = Field(description="Logical architecture layers")
+    layers: List[SimpleArchitectureLayer] = Field(description="Logical architecture layers")
 
 class SimpleReadingDay(BaseModel):
     day: int = Field(description="Day number")
@@ -117,7 +132,7 @@ class SetupGuideOutput(BaseModel):
 
 class SynthesizerAgent:
     # Per-extraction timeout in seconds
-    EXTRACT_TIMEOUT_SECONDS = 90
+    EXTRACT_TIMEOUT_SECONDS = 300
 
     def __init__(self, llm, settings: Settings):
         self.llm = llm
@@ -275,8 +290,8 @@ class SynthesizerAgent:
             prompt = build_architecture_layers_prompt(findings_text)
             layers_data = self._extract(prompt, ArchitectureLayersOutput, "Architecture Layers")
 
-        logger.info(f"Synthesizer running parallel extractions...")
-        with ThreadPoolExecutor(max_workers=10) as executor:
+        logger.info(f"Synthesizer running parallel extractions with {self.settings.max_parallel_agents} workers...")
+        with ThreadPoolExecutor(max_workers=self.settings.max_parallel_agents) as executor:
             futures = [
                 executor.submit(extract_overview),
                 executor.submit(extract_architecture),
@@ -431,8 +446,18 @@ class SynthesizerAgent:
             ai_insights=insights_data.insights if insights_data else [],
             common_pitfalls=[gap.description for gap in gaps],
             repository_health=health_data.health_scores if health_data else [],
-            architecture_layers=layers_data.layers if layers_data else [],
-            component_cards=cards_data.cards if cards_data else [],
+            architecture_layers=[
+                ArchitectureLayer(
+                    name=L.name, purpose=L.purpose, components=L.components, order=L.order
+                ) for L in layers_data.layers
+            ] if layers_data and layers_data.layers else [],
+            component_cards=[
+                ComponentCard(
+                    name=C.name, purpose=C.purpose, responsibilities=C.responsibilities,
+                    consumes=C.consumes, produces=C.produces, dependencies=C.dependencies,
+                    used_by=C.used_by
+                ) for C in cards_data.cards
+            ] if cards_data and cards_data.cards else [],
             dependency_insights=[],
             generated_at=datetime.now(timezone.utc)
         )

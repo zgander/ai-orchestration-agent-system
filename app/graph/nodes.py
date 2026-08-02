@@ -13,8 +13,8 @@ from app.agents.api_data_agent import APIDataAgent
 from app.agents.setup_agent import SetupAgent
 from app.agents.reviewer_agent import ReviewerAgent
 from app.agents.synthesizer_agent import SynthesizerAgent
-from app.tools.repository_tools import get_repository_tree, read_file, search_files, list_directory
-from app.tools.analysis_tools import get_tech_stack, get_dependency_graph, get_entry_points, get_api_endpoints, get_environment_variables, search_symbols, get_file_dependencies
+from app.tools.repository_tools import read_file, search_files, list_directory
+from app.tools.analysis_tools import search_symbols, get_file_dependencies
 from app.tools.tool_context import set_root_path
 from app.utils.logger import get_logger
 
@@ -106,19 +106,19 @@ class WorkflowNodes:
         }
 
     def architecture_node(self, state: InvestigationState) -> dict:
-        tools = [get_repository_tree, get_tech_stack, get_dependency_graph, get_entry_points, read_file, list_directory]
+        tools = [read_file, search_files, list_directory]
         return self._run_specialist(ArchitectureAgent, AgentType.ARCHITECTURE, tools, state)
 
     def execution_flow_node(self, state: InvestigationState) -> dict:
-        tools = [get_entry_points, get_dependency_graph, search_symbols, read_file, get_file_dependencies]
+        tools = [search_symbols, read_file, search_files, get_file_dependencies]
         return self._run_specialist(ExecutionFlowAgent, AgentType.EXECUTION_FLOW, tools, state)
 
     def api_data_node(self, state: InvestigationState) -> dict:
-        tools = [get_api_endpoints, get_dependency_graph, get_repository_tree, search_symbols, read_file]
+        tools = [search_symbols, read_file, search_files]
         return self._run_specialist(APIDataAgent, AgentType.API_DATA, tools, state)
 
     def setup_node(self, state: InvestigationState) -> dict:
-        tools = [get_tech_stack, get_environment_variables, read_file, search_files, get_repository_tree]
+        tools = [read_file, search_files, list_directory]
         return self._run_specialist(SetupAgent, AgentType.SETUP, tools, state)
         
     def merge_results_node(self, state: InvestigationState) -> dict:

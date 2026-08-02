@@ -64,19 +64,19 @@ class ReInvestigationService:
         from app.agents.execution_flow_agent import ExecutionFlowAgent
         from app.agents.api_data_agent import APIDataAgent
         from app.agents.setup_agent import SetupAgent
-        from app.tools.repository_tools import get_repository_tree, read_file, search_files, list_directory
-        from app.tools.analysis_tools import get_tech_stack, get_dependency_graph, get_entry_points, get_api_endpoints, get_environment_variables, search_symbols, get_file_dependencies
+        from app.tools.repository_tools import read_file, search_files, list_directory
+        from app.tools.analysis_tools import search_symbols, get_file_dependencies
         from app.tools.tool_context import set_root_path
         
         set_root_path(repository_path)
         
         if agent_type == AgentType.ARCHITECTURE:
-            return ArchitectureAgent(self.llm, [get_repository_tree, get_tech_stack, get_dependency_graph, get_entry_points, read_file, list_directory], self.settings)
+            return ArchitectureAgent(self.llm, [read_file, search_files, list_directory], self.settings)
         elif agent_type == AgentType.EXECUTION_FLOW:
-            return ExecutionFlowAgent(self.llm, [get_entry_points, get_dependency_graph, search_symbols, read_file, get_file_dependencies], self.settings)
+            return ExecutionFlowAgent(self.llm, [search_symbols, read_file, search_files, get_file_dependencies], self.settings)
         elif agent_type == AgentType.API_DATA:
-            return APIDataAgent(self.llm, [get_api_endpoints, get_dependency_graph, get_repository_tree, search_symbols, read_file], self.settings)
+            return APIDataAgent(self.llm, [search_symbols, read_file, search_files], self.settings)
         elif agent_type == AgentType.SETUP:
-            return SetupAgent(self.llm, [get_tech_stack, get_environment_variables, read_file, search_files, get_repository_tree], self.settings)
+            return SetupAgent(self.llm, [read_file, search_files, list_directory], self.settings)
         else:
-            return ArchitectureAgent(self.llm, [get_repository_tree, get_tech_stack, get_dependency_graph, get_entry_points, read_file, list_directory], self.settings)
+            return ArchitectureAgent(self.llm, [read_file, search_files, list_directory], self.settings)
