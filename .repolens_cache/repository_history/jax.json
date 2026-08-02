@@ -1,0 +1,22 @@
+{
+  "name": "jax",
+  "url": "https://github.com/google/jax",
+  "source_type": "GITHUB",
+  "root_path": "C:\\Users\\preet\\AppData\\Local\\Temp\\repolens_2q4eol6n",
+  "tech_stack_summary": {
+    "languages": [
+      "Python",
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "C"
+    ],
+    "frameworks": [],
+    "databases": []
+  },
+  "analysed_at": "2026-08-02T13:32:42.479950Z",
+  "last_accessed_at": "2026-08-02T13:32:42.481997",
+  "investigation_status": "NOT_STARTED",
+  "pinned": false,
+  "size_bytes": 74658322
+}

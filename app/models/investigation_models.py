@@ -111,6 +111,7 @@ class InvestigationResult(BaseModel):
     duration_seconds: float
     review_report: Optional["ReviewReport"] = None
     onboarding_guide: Optional["OnboardingGuide"] = None
+    errors: List[str] = Field(default_factory=list)
 
     model_config = ConfigDict(frozen=True)
 
@@ -127,3 +128,5 @@ class SupervisorPlanOutput(BaseModel):
 from app.models.review_models import ReviewReport
 from app.models.onboarding_models import OnboardingGuide
 InvestigationResult.model_rebuild()
+
+
