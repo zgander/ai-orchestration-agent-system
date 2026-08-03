@@ -27,8 +27,6 @@ class Settings(BaseSettings):
     llm_provider: str = "ollama"
     ollama_model: str = "llama3.2:3b"
     ollama_base_url: str = "http://127.0.0.1:11434"
-    google_api_key: str = ""
-    google_model: str = "gemini-2.5-flash"
     temperature: float = 0
     max_tokens: int = 2048
 
