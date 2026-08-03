@@ -39,7 +39,8 @@ class ToolResult(BaseModel):
 
 class Evidence(BaseModel):
     source_tool: str = Field(description="Name of the tool used (e.g., read_file)")
-    file_path: Optional[str] = Field(None, description="File path if applicable")
+    tool_call_id: Optional[str] = Field(None, description="Links to ToolResult for full audit trail")
+    file_path: str = Field(description="File path if applicable")
     line_numbers: Optional[str] = Field(None, description="Line numbers if applicable")
     symbol: Optional[str] = Field(None, description="Symbol name if applicable")
     content: str = Field(description="Snippet or summary of the evidence")
@@ -109,8 +110,8 @@ class InvestigationResult(BaseModel):
     started_at: datetime
     completed_at: datetime
     duration_seconds: float
-    review_report: Optional[Any] = None
-    onboarding_guide: Optional[Any] = None
+    review_report: Optional['ReviewReport'] = None
+    onboarding_guide: Optional['OnboardingGuide'] = None
     errors: List[str] = Field(default_factory=list)
 
     model_config = ConfigDict(frozen=True)
@@ -123,4 +124,8 @@ class TaskAssignment(BaseModel):
 class SupervisorPlanOutput(BaseModel):
     strategy: str = Field(description="Brief explanation of the overall investigation strategy")
     tasks: List[TaskAssignment] = Field(description="List of tasks assigned to specialist agents")
+
+from app.models.review_models import ReviewReport
+from app.models.onboarding_models import OnboardingGuide
+InvestigationResult.model_rebuild()
 

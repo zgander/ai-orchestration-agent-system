@@ -7,7 +7,7 @@ def render_settings_page():
     
     with st.form("settings_form"):
         st.subheader("LLM Provider")
-        provider = st.selectbox("Provider", ["ollama", "openai", "anthropic"], index=["ollama", "openai", "anthropic"].index(settings.llm_provider))
+        provider = st.selectbox("Provider", ["ollama", "openai", "anthropic", "google"], index=["ollama", "openai", "anthropic", "google"].index(settings.llm_provider))
         model = st.text_input("Model", value=settings.ollama_model)
         temperature = st.slider("Temperature", 0.0, 1.0, float(settings.temperature))
         

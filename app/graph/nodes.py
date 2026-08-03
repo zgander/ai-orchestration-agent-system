@@ -172,19 +172,42 @@ class WorkflowNodes:
         }
         
     def revision_node(self, state: InvestigationState) -> dict:
-        # This is a simplified revision node. It just marks them as uncertain for now 
+        # This is a simplified revision node. It just marks rejected findings as uncertain for now 
         # to avoid complex re-entrancy in the agent loops without a lot more scaffolding.
-        # In a full implementation, this would loop back to specific agents.
+        
+        review_report_json = state.get("review_report")
+        updates = {}
+        
+        if review_report_json:
+            review_report = ReviewReport(**json.loads(review_report_json))
+            updated_reviews = []
+            changed = False
+            for review in review_report.reviews:
+                if review.verdict == ReviewVerdict.REJECTED:
+                    r = review.model_copy(update={'verdict': ReviewVerdict.UNCERTAIN})
+                    updated_reviews.append(r)
+                    changed = True
+                else:
+                    updated_reviews.append(review)
+                    
+            if changed:
+                review_report = review_report.model_copy(update={
+                    'reviews': updated_reviews,
+                    'total_rejected': 0,
+                    'total_uncertain': review_report.total_uncertain + review_report.total_rejected
+                })
+                updates["review_report"] = review_report.model_dump_json()
+
         event = TimelineEvent(
             timestamp=datetime.now(timezone.utc),
             agent_type=AgentType.REVIEWER,
-            event="Revisions requested, but automatic re-analysis is skipped. Marking as uncertain."
+            event="Revisions requested, but automatic re-analysis is skipped. Marked rejected findings as UNCERTAIN."
         )
-        return {
-            "current_stage": "revising",
-            "timeline_events": [event.model_dump_json()],
-            "revision_requests": [] # clear them so we don't loop forever
-        }
+        
+        updates["current_stage"] = "revising"
+        updates["timeline_events"] = [event.model_dump_json()]
+        updates["revision_requests"] = [] # clear them so we don't loop forever
+        return updates
 
     def synthesizer_node(self, state: InvestigationState) -> dict:
         event = TimelineEvent(

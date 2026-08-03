@@ -15,19 +15,21 @@ from app.utils.logger import get_logger
 logger = get_logger(__name__)
 
 class ReviewerVerdictOutput(BaseModel):
-    verdict: ReviewVerdict = Field(description="APPROVED or REJECTED")
+    verdict: ReviewVerdict = Field(description="APPROVED, REJECTED, or UNCERTAIN")
     reason: str = Field(description="Reason for the verdict")
     confidence: float = Field(description="Confidence in this review (0.0 to 1.0)")
 
 class ReviewerBatchOutput(BaseModel):
     reviews: List[ReviewerVerdictOutput] = Field(description="List of reviews corresponding to the findings")
+    contradictions: List[str] = Field(default_factory=list, description="List of contradictions found across different agent findings")
+    recommendations: List[str] = Field(default_factory=list, description="Overall recommendations for the repository or investigation")
 
 class ReviewerAgent:
     def __init__(self, llm, settings: Settings):
         self.llm = llm
         self.settings = settings
 
-    def review_findings_batch(self, findings: List[tuple[AgentType, AgentFinding]]) -> List[FindingReview]:
+    def review_findings_batch(self, findings: List[tuple[AgentType, AgentFinding]]) -> tuple[List[FindingReview], List[str], List[str]]:
         logger.info(f"Reviewing {len(findings)} findings in a batch...")
         
         # Pre-filter findings that obviously fail thresholds
@@ -41,7 +43,7 @@ class ReviewerAgent:
                     finding_title=finding.title,
                     agent_type=agent_type,
                     verdict=ReviewVerdict.REJECTED,
-                    confidence=1.0,
+                    confidence=0.0,
                     reason="Auto-rejected: No evidence provided.",
                     original_finding=finding,
                     evidence_count=len(finding.evidence) if finding.evidence else 0
@@ -54,7 +56,7 @@ class ReviewerAgent:
                     finding_title=finding.title,
                     agent_type=agent_type,
                     verdict=ReviewVerdict.REJECTED,
-                    confidence=1.0,
+                    confidence=0.0,
                     reason=f"Auto-rejected: Confidence score {finding.confidence} is below minimum threshold.",
                     original_finding=finding,
                     evidence_count=len(finding.evidence) if finding.evidence else 0
@@ -64,7 +66,7 @@ class ReviewerAgent:
             valid_findings.append((i, agent_type, finding))
             
         if not valid_findings:
-            return [r for _, r in sorted(auto_reviews)]
+            return [r for _, r in sorted(auto_reviews)], [], []
 
         # Prepare batch prompt
         from app.agents.prompts.reviewer_prompt import build_reviewer_batch_prompt
@@ -87,6 +89,9 @@ class ReviewerAgent:
             extractor = extraction_prompt | structured_llm
             
             result = extractor.invoke({"text": user_prompt})
+            
+            contradictions = result.contradictions if (result and hasattr(result, 'contradictions')) else []
+            recommendations = result.recommendations if (result and hasattr(result, 'recommendations')) else []
             
             # Map back to valid findings
             llm_reviews = []
@@ -116,6 +121,8 @@ class ReviewerAgent:
                     
         except Exception as e:
             logger.error(f"Batch Reviewer LLM failed: {e}")
+            contradictions = []
+            recommendations = []
             llm_reviews = []
             for orig_idx, agent_type, finding in valid_findings:
                 llm_reviews.append((orig_idx, FindingReview(
@@ -131,7 +138,7 @@ class ReviewerAgent:
         # Recombine and sort by original index
         all_reviews = auto_reviews + llm_reviews
         all_reviews.sort(key=lambda x: x[0])
-        return [r for _, r in all_reviews]
+        return [r for _, r in all_reviews], contradictions, recommendations
 
     def review_all_reports(self, agent_reports: Dict[AgentType, AgentReport]) -> ReviewReport:
         logger.info("Starting review of all agent reports...")
@@ -154,14 +161,15 @@ class ReviewerAgent:
             )
             
         # Batch review
-        reviews = self.review_findings_batch(all_findings)
+        reviews, contradictions, recommendations = self.review_findings_batch(all_findings)
         
         total_approved = sum(1 for r in reviews if r.verdict == ReviewVerdict.APPROVED)
         total_rejected = sum(1 for r in reviews if r.verdict == ReviewVerdict.REJECTED)
         total_uncertain = sum(1 for r in reviews if r.verdict == ReviewVerdict.UNCERTAIN)
-        total_conf = sum(r.confidence for r in reviews)
-                
-        overall_confidence = total_conf / len(reviews) if reviews else 0.0
+        
+        approved_reviews = [r for r in reviews if r.verdict == ReviewVerdict.APPROVED]
+        total_conf = sum(r.confidence for r in approved_reviews)
+        overall_confidence = total_conf / len(approved_reviews) if approved_reviews else 0.0
             
         return ReviewReport(
             reviews=reviews,
@@ -170,5 +178,7 @@ class ReviewerAgent:
             total_uncertain=total_uncertain,
             overall_confidence=overall_confidence,
             revision_count=0,
-            reviewed_at=datetime.now(timezone.utc)
+            reviewed_at=datetime.now(timezone.utc),
+            contradictions=contradictions,
+            recommendations=recommendations
         )

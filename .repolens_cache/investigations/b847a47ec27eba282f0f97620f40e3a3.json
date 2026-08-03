@@ -1,0 +1,1057 @@
+{
+  "plan": {
+    "repository_name": "campus-ride-share",
+    "tasks": [
+      {
+        "task_id": "ARCHITECTURE-1",
+        "agent_type": "ARCHITECTURE",
+        "description": "Identify the logical layers of the application (e.g., presentation, business logic, data access) and request architecture layers for review.",
+        "status": "IDLE",
+        "created_at": "2026-08-03T16:29:32.033219Z",
+        "completed_at": null
+      },
+      {
+        "task_id": "EXECUTION_FLOW-1",
+        "agent_type": "EXECUTION_FLOW",
+        "description": "Trace the categorized flows (Startup, User Journey, Data Flow, Agent Collaboration) to understand how the application is executed.",
+        "status": "IDLE",
+        "created_at": "2026-08-03T16:29:32.033242Z",
+        "completed_at": null
+      },
+      {
+        "task_id": "ARCHITECTURE-2",
+        "agent_type": "ARCHITECTURE",
+        "description": "Analyze the component communication and identify areas for improvement or optimization.",
+        "status": "IDLE",
+        "created_at": "2026-08-03T16:29:32.033250Z",
+        "completed_at": null
+      },
+      {
+        "task_id": "EXECUTION_FLOW-2",
+        "agent_type": "EXECUTION_FLOW",
+        "description": "Identify critical call chains that impact performance, scalability, or reliability.",
+        "status": "IDLE",
+        "created_at": "2026-08-03T16:29:32.033256Z",
+        "completed_at": null
+      },
+      {
+        "task_id": "29125c7a-ab2d-4cbe-9837-499d54fa1087",
+        "agent_type": "API_DATA",
+        "description": "Investigate all API_DATA aspects of the repository.",
+        "status": "IDLE",
+        "created_at": "2026-08-03T16:29:32.033645Z",
+        "completed_at": null
+      },
+      {
+        "task_id": "bcf48008-8233-42e1-87f4-4f712bd7df3e",
+        "agent_type": "SETUP",
+        "description": "Investigate all SETUP aspects of the repository.",
+        "status": "IDLE",
+        "created_at": "2026-08-03T16:29:32.033975Z",
+        "completed_at": null
+      }
+    ],
+    "strategy": "To onboard a new backend developer, we will focus on understanding the repository's architecture and execution flow. We will use the specialist agents to identify key components, logical layers, and critical call chains.",
+    "created_at": "2026-08-03T16:29:32.033991Z"
+  },
+  "agent_reports": {
+    "ARCHITECTURE": {
+      "agent_type": "ARCHITECTURE",
+      "status": "COMPLETED",
+      "tasks": [
+        {
+          "task_id": "ARCHITECTURE-1",
+          "agent_type": "ARCHITECTURE",
+          "description": "Identify the logical layers of the application (e.g., presentation, business logic, data access) and request architecture layers for review.",
+          "status": "COMPLETED",
+          "created_at": "2026-08-03T16:29:32.033219Z",
+          "completed_at": "2026-08-03T16:35:11.825582Z"
+        },
+        {
+          "task_id": "ARCHITECTURE-2",
+          "agent_type": "ARCHITECTURE",
+          "description": "Analyze the component communication and identify areas for improvement or optimization.",
+          "status": "COMPLETED",
+          "created_at": "2026-08-03T16:29:32.033250Z",
+          "completed_at": "2026-08-03T16:35:11.825596Z"
+        }
+      ],
+      "findings": [
+        {
+          "title": "Identify logical layers",
+          "description": "Listed contents of specific directories",
+          "evidence": [],
+          "confidence": 0.8,
+          "category": "Repository Structure",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "Identify logical layers",
+          "description": "Found files containing keywords related to business logic",
+          "evidence": [],
+          "confidence": 0.7,
+          "category": "Repository Structure",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "Request architecture layers for review",
+          "description": "Listed contents of backend and frontend directories",
+          "evidence": [],
+          "confidence": 0.9,
+          "category": "Repository Structure",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "Request architecture layers for review",
+          "description": "Listed contents of backend and frontend directories",
+          "evidence": [],
+          "confidence": 0.8,
+          "category": "Repository Structure",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "Analyze component communication",
+          "description": "Found import statements in backend application files",
+          "evidence": [],
+          "confidence": 0.6,
+          "category": "Component Communication",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "Analyze component communication",
+          "description": "Read contents of backend/app.py file to gather information about component communication",
+          "evidence": [],
+          "confidence": 0.7,
+          "category": "Component Communication",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "Identify areas for improvement or optimization",
+          "description": "Found asynchronous code in backend application files",
+          "evidence": [],
+          "confidence": 0.8,
+          "category": "Performance Optimization",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "Identify areas for improvement or optimization",
+          "description": "Read contents of backend/optimizer.py file to identify areas for improvement or optimization",
+          "evidence": [],
+          "confidence": 0.9,
+          "category": "Performance Optimization",
+          "review_status": null,
+          "reviewer_note": null
+        }
+      ],
+      "tool_calls": [],
+      "reasoning_steps": [],
+      "started_at": "2026-08-03T16:29:32.051038Z",
+      "completed_at": "2026-08-03T16:35:11.825602Z",
+      "error": null
+    },
+    "EXECUTION_FLOW": {
+      "agent_type": "EXECUTION_FLOW",
+      "status": "COMPLETED",
+      "tasks": [
+        {
+          "task_id": "EXECUTION_FLOW-1",
+          "agent_type": "EXECUTION_FLOW",
+          "description": "Trace the categorized flows (Startup, User Journey, Data Flow, Agent Collaboration) to understand how the application is executed.",
+          "status": "COMPLETED",
+          "created_at": "2026-08-03T16:29:32.033242Z",
+          "completed_at": "2026-08-03T16:38:05.557678Z"
+        },
+        {
+          "task_id": "EXECUTION_FLOW-2",
+          "agent_type": "EXECUTION_FLOW",
+          "description": "Identify critical call chains that impact performance, scalability, or reliability.",
+          "status": "COMPLETED",
+          "created_at": "2026-08-03T16:29:32.033256Z",
+          "completed_at": "2026-08-03T16:38:05.557754Z"
+        }
+      ],
+      "findings": [
+        {
+          "title": "Startup Flow",
+          "description": "The application reads several files during startup.",
+          "evidence": [
+            {
+              "source_tool": "read_file",
+              "tool_call_id": null,
+              "file_path": "backend\\app.py",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": "> 50%"
+            },
+            {
+              "source_tool": "read_file",
+              "tool_call_id": null,
+              "file_path": "frontend\\client\\src\\index.js",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": "> 50%"
+            },
+            {
+              "source_tool": "read_file",
+              "tool_call_id": null,
+              "file_path": "package.json",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": "> 50%"
+            }
+          ],
+          "confidence": 0.8,
+          "category": "Initialization",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "Primary User Journey",
+          "description": "The application searches for symbols in the code.",
+          "evidence": [
+            {
+              "source_tool": "search_symbols",
+              "tool_call_id": null,
+              "file_path": "backend\\app.py",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": "> 80%"
+            },
+            {
+              "source_tool": "read_file",
+              "tool_call_id": null,
+              "file_path": "backend\\app.py",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": "> 50%"
+            },
+            {
+              "source_tool": "search_symbols",
+              "tool_call_id": null,
+              "file_path": "frontend\\client\\src\\index.js",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": "> 80%"
+            },
+            {
+              "source_tool": "read_file",
+              "tool_call_id": null,
+              "file_path": "frontend\\client\\src\\index.js",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": "> 50%"
+            }
+          ],
+          "confidence": 0.9,
+          "category": "Search",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "Data Flow",
+          "description": "The application returns file dependencies.",
+          "evidence": [
+            {
+              "source_tool": "get_file_dependencies",
+              "tool_call_id": null,
+              "file_path": "backend\\app.py",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": "> 50%"
+            },
+            {
+              "source_tool": "read_file",
+              "tool_call_id": null,
+              "file_path": "test_mongo.py",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": "> 50%"
+            }
+          ],
+          "confidence": 0.7,
+          "category": "Dependency Analysis",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "Critical Call Chains",
+          "description": "The application executes critical call chains.",
+          "evidence": [
+            {
+              "source_tool": "read_file",
+              "tool_call_id": null,
+              "file_path": "backend\\app.py",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": "> 90%"
+            },
+            {
+              "source_tool": "read_file",
+              "tool_call_id": null,
+              "file_path": "frontend\\client\\src\\index.js",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": "> 90%"
+            }
+          ],
+          "confidence": 0.95,
+          "category": "Execution Flow",
+          "review_status": null,
+          "reviewer_note": null
+        }
+      ],
+      "tool_calls": [],
+      "reasoning_steps": [],
+      "started_at": "2026-08-03T16:29:32.054859Z",
+      "completed_at": "2026-08-03T16:38:05.557770Z",
+      "error": null
+    },
+    "API_DATA": {
+      "agent_type": "API_DATA",
+      "status": "COMPLETED",
+      "tasks": [
+        {
+          "task_id": "29125c7a-ab2d-4cbe-9837-499d54fa1087",
+          "agent_type": "API_DATA",
+          "description": "Investigate all API_DATA aspects of the repository.",
+          "status": "COMPLETED",
+          "created_at": "2026-08-03T16:29:32.033645Z",
+          "completed_at": "2026-08-03T16:36:14.089327Z"
+        }
+      ],
+      "findings": [
+        {
+          "title": "Read backend/app.py",
+          "description": "File read operation performed on backend/app.py",
+          "evidence": [
+            {
+              "source_tool": "read_file",
+              "tool_call_id": null,
+              "file_path": "backend\\app.py",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": "Yeah, this is the file"
+            }
+          ],
+          "confidence": 100.0,
+          "category": "API_DATA",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "Search for create_ride|check_status|force_match in files",
+          "description": "Search operation performed on files with specified patterns",
+          "evidence": [
+            {
+              "source_tool": "search_files",
+              "tool_call_id": null,
+              "file_path": "",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": ""
+            }
+          ],
+          "confidence": 100.0,
+          "category": "API_DATA",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "Read test_mongo.py",
+          "description": "File read operation performed on test_mongo.py",
+          "evidence": [
+            {
+              "source_tool": "read_file",
+              "tool_call_id": null,
+              "file_path": "test_mongo.py",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": ""
+            }
+          ],
+          "confidence": 100.0,
+          "category": "API_DATA",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        {
+          "title": "Read backend/optimizer.py",
+          "description": "File read operation performed on backend/optimizer.py",
+          "evidence": [
+            {
+              "source_tool": "read_file",
+              "tool_call_id": null,
+              "file_path": "backend/optimizer.py",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": ""
+            }
+          ],
+          "confidence": 100.0,
+          "category": "API_DATA",
+          "review_status": null,
+          "reviewer_note": null
+        }
+      ],
+      "tool_calls": [],
+      "reasoning_steps": [],
+      "started_at": "2026-08-03T16:29:32.041551Z",
+      "completed_at": "2026-08-03T16:36:14.089347Z",
+      "error": null
+    },
+    "SETUP": {
+      "agent_type": "SETUP",
+      "status": "COMPLETED",
+      "tasks": [
+        {
+          "task_id": "bcf48008-8233-42e1-87f4-4f712bd7df3e",
+          "agent_type": "SETUP",
+          "description": "Investigate all SETUP aspects of the repository.",
+          "status": "COMPLETED",
+          "created_at": "2026-08-03T16:29:32.033975Z",
+          "completed_at": "2026-08-03T16:40:11.009736Z"
+        }
+      ],
+      "findings": [
+        {
+          "title": "Startup Command",
+          "description": "The startup command is determined by the entry_points section in the Analysis Summary.",
+          "evidence": [
+            {
+              "source_tool": "Analysis Summary",
+              "tool_call_id": null,
+              "file_path": "backend/app.py",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "Python application instance defined at line 10",
+              "relevance": ">= 0.5"
+            },
+            {
+              "source_tool": "Analysis Summary",
+              "tool_call_id": null,
+              "file_path": "backend/app.py",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "Flask application instance defined at line 95",
+              "relevance": "> 0.5"
+            }
+          ],
+          "confidence": 0.8,
+          "category": "startup_command",
+          "review_status": "incomplete",
+          "reviewer_note": null
+        }
+      ],
+      "tool_calls": [
+        {
+          "tool_name": "list_directory",
+          "input_args": {
+            "dir_path": "."
+          },
+          "output": "[\n  {\n    \"name\": \".git\",\n    \"type\": \"directory\",\n    \"size\": 0\n  },\n  {\n    \"name\": \"backend\",\n    \"type\": \"directory\",\n    \"size\": 0\n  },\n  {\n    \"name\": \"frontend\",\n    \"type\": \"directory\",\n    \"size\": 0\n  },\n  {\n    \"name\": \"README.md\",\n    \"type\": \"file\",\n    \"size\": 19\n  },\n  {\n    \"name\": \"test_mongo.py\",\n    \"type\": \"file\",\n    \"size\": 309\n  }\n]",
+          "success": true,
+          "duration_seconds": 0.0
+        }
+      ],
+      "reasoning_steps": [
+        "Used tool list_directory"
+      ],
+      "started_at": "2026-08-03T16:29:32.061020Z",
+      "completed_at": "2026-08-03T16:40:11.009749Z",
+      "error": null
+    }
+  },
+  "timeline": [
+    {
+      "timestamp": "2026-08-03T16:29:32.034030Z",
+      "agent_type": "SUPERVISOR",
+      "event": "Supervisor created investigation plan",
+      "detail": "Created 6 tasks."
+    },
+    {
+      "timestamp": "2026-08-03T16:36:14.089361Z",
+      "agent_type": "API_DATA",
+      "event": "API_DATA completed investigation",
+      "detail": "Found 4 findings."
+    },
+    {
+      "timestamp": "2026-08-03T16:35:11.825617Z",
+      "agent_type": "ARCHITECTURE",
+      "event": "ARCHITECTURE completed investigation",
+      "detail": "Found 8 findings."
+    },
+    {
+      "timestamp": "2026-08-03T16:38:05.557839Z",
+      "agent_type": "EXECUTION_FLOW",
+      "event": "EXECUTION_FLOW completed investigation",
+      "detail": "Found 4 findings."
+    },
+    {
+      "timestamp": "2026-08-03T16:40:11.009762Z",
+      "agent_type": "SETUP",
+      "event": "SETUP completed investigation",
+      "detail": "Found 1 findings."
+    },
+    {
+      "timestamp": "2026-08-03T16:40:11.023666Z",
+      "agent_type": "SUPERVISOR",
+      "event": "Investigation completed, starting review",
+      "detail": null
+    },
+    {
+      "timestamp": "2026-08-03T16:42:49.367881Z",
+      "agent_type": "REVIEWER",
+      "event": "Review completed. 0 approved, 8 rejected.",
+      "detail": null
+    },
+    {
+      "timestamp": "2026-08-03T16:42:49.374306Z",
+      "agent_type": "REVIEWER",
+      "event": "Revisions requested, but automatic re-analysis is skipped. Marked rejected findings as UNCERTAIN.",
+      "detail": null
+    }
+  ],
+  "started_at": "2026-08-03T16:28:31.285622Z",
+  "completed_at": "2026-08-03T16:42:49.391114Z",
+  "duration_seconds": 858.106121301651,
+  "review_report": {
+    "reviews": [
+      {
+        "finding_title": "Identify logical layers",
+        "agent_type": "ARCHITECTURE",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Auto-rejected: No evidence provided.",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Identify logical layers",
+          "description": "Listed contents of specific directories",
+          "evidence": [],
+          "confidence": 0.8,
+          "category": "Repository Structure",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null,
+        "evidence_count": 0
+      },
+      {
+        "finding_title": "Identify logical layers",
+        "agent_type": "ARCHITECTURE",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Auto-rejected: No evidence provided.",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Identify logical layers",
+          "description": "Found files containing keywords related to business logic",
+          "evidence": [],
+          "confidence": 0.7,
+          "category": "Repository Structure",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null,
+        "evidence_count": 0
+      },
+      {
+        "finding_title": "Request architecture layers for review",
+        "agent_type": "ARCHITECTURE",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Auto-rejected: No evidence provided.",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Request architecture layers for review",
+          "description": "Listed contents of backend and frontend directories",
+          "evidence": [],
+          "confidence": 0.9,
+          "category": "Repository Structure",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null,
+        "evidence_count": 0
+      },
+      {
+        "finding_title": "Request architecture layers for review",
+        "agent_type": "ARCHITECTURE",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Auto-rejected: No evidence provided.",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Request architecture layers for review",
+          "description": "Listed contents of backend and frontend directories",
+          "evidence": [],
+          "confidence": 0.8,
+          "category": "Repository Structure",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null,
+        "evidence_count": 0
+      },
+      {
+        "finding_title": "Analyze component communication",
+        "agent_type": "ARCHITECTURE",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Auto-rejected: No evidence provided.",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Analyze component communication",
+          "description": "Found import statements in backend application files",
+          "evidence": [],
+          "confidence": 0.6,
+          "category": "Component Communication",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null,
+        "evidence_count": 0
+      },
+      {
+        "finding_title": "Analyze component communication",
+        "agent_type": "ARCHITECTURE",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Auto-rejected: No evidence provided.",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Analyze component communication",
+          "description": "Read contents of backend/app.py file to gather information about component communication",
+          "evidence": [],
+          "confidence": 0.7,
+          "category": "Component Communication",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null,
+        "evidence_count": 0
+      },
+      {
+        "finding_title": "Identify areas for improvement or optimization",
+        "agent_type": "ARCHITECTURE",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Auto-rejected: No evidence provided.",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Identify areas for improvement or optimization",
+          "description": "Found asynchronous code in backend application files",
+          "evidence": [],
+          "confidence": 0.8,
+          "category": "Performance Optimization",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null,
+        "evidence_count": 0
+      },
+      {
+        "finding_title": "Identify areas for improvement or optimization",
+        "agent_type": "ARCHITECTURE",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Auto-rejected: No evidence provided.",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Identify areas for improvement or optimization",
+          "description": "Read contents of backend/optimizer.py file to identify areas for improvement or optimization",
+          "evidence": [],
+          "confidence": 0.9,
+          "category": "Performance Optimization",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null,
+        "evidence_count": 0
+      },
+      {
+        "finding_title": "Startup Flow",
+        "agent_type": "EXECUTION_FLOW",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Batch review mismatch",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Startup Flow",
+          "description": "The application reads several files during startup.",
+          "evidence": [
+            {
+              "source_tool": "read_file",
+              "tool_call_id": null,
+              "file_path": "backend\\app.py",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": "> 50%"
+            },
+            {
+              "source_tool": "read_file",
+              "tool_call_id": null,
+              "file_path": "frontend\\client\\src\\index.js",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": "> 50%"
+            },
+            {
+              "source_tool": "read_file",
+              "tool_call_id": null,
+              "file_path": "package.json",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": "> 50%"
+            }
+          ],
+          "confidence": 0.8,
+          "category": "Initialization",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null,
+        "evidence_count": 3
+      },
+      {
+        "finding_title": "Primary User Journey",
+        "agent_type": "EXECUTION_FLOW",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Batch review mismatch",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Primary User Journey",
+          "description": "The application searches for symbols in the code.",
+          "evidence": [
+            {
+              "source_tool": "search_symbols",
+              "tool_call_id": null,
+              "file_path": "backend\\app.py",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": "> 80%"
+            },
+            {
+              "source_tool": "read_file",
+              "tool_call_id": null,
+              "file_path": "backend\\app.py",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": "> 50%"
+            },
+            {
+              "source_tool": "search_symbols",
+              "tool_call_id": null,
+              "file_path": "frontend\\client\\src\\index.js",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": "> 80%"
+            },
+            {
+              "source_tool": "read_file",
+              "tool_call_id": null,
+              "file_path": "frontend\\client\\src\\index.js",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": "> 50%"
+            }
+          ],
+          "confidence": 0.9,
+          "category": "Search",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null,
+        "evidence_count": 4
+      },
+      {
+        "finding_title": "Data Flow",
+        "agent_type": "EXECUTION_FLOW",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Batch review mismatch",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Data Flow",
+          "description": "The application returns file dependencies.",
+          "evidence": [
+            {
+              "source_tool": "get_file_dependencies",
+              "tool_call_id": null,
+              "file_path": "backend\\app.py",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": "> 50%"
+            },
+            {
+              "source_tool": "read_file",
+              "tool_call_id": null,
+              "file_path": "test_mongo.py",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": "> 50%"
+            }
+          ],
+          "confidence": 0.7,
+          "category": "Dependency Analysis",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null,
+        "evidence_count": 2
+      },
+      {
+        "finding_title": "Critical Call Chains",
+        "agent_type": "EXECUTION_FLOW",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Batch review mismatch",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Critical Call Chains",
+          "description": "The application executes critical call chains.",
+          "evidence": [
+            {
+              "source_tool": "read_file",
+              "tool_call_id": null,
+              "file_path": "backend\\app.py",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": "> 90%"
+            },
+            {
+              "source_tool": "read_file",
+              "tool_call_id": null,
+              "file_path": "frontend\\client\\src\\index.js",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": "> 90%"
+            }
+          ],
+          "confidence": 0.95,
+          "category": "Execution Flow",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null,
+        "evidence_count": 2
+      },
+      {
+        "finding_title": "Read backend/app.py",
+        "agent_type": "API_DATA",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Batch review mismatch",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Read backend/app.py",
+          "description": "File read operation performed on backend/app.py",
+          "evidence": [
+            {
+              "source_tool": "read_file",
+              "tool_call_id": null,
+              "file_path": "backend\\app.py",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": "Yeah, this is the file"
+            }
+          ],
+          "confidence": 100.0,
+          "category": "API_DATA",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null,
+        "evidence_count": 1
+      },
+      {
+        "finding_title": "Search for create_ride|check_status|force_match in files",
+        "agent_type": "API_DATA",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Batch review mismatch",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Search for create_ride|check_status|force_match in files",
+          "description": "Search operation performed on files with specified patterns",
+          "evidence": [
+            {
+              "source_tool": "search_files",
+              "tool_call_id": null,
+              "file_path": "",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": ""
+            }
+          ],
+          "confidence": 100.0,
+          "category": "API_DATA",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null,
+        "evidence_count": 1
+      },
+      {
+        "finding_title": "Read test_mongo.py",
+        "agent_type": "API_DATA",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Batch review mismatch",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Read test_mongo.py",
+          "description": "File read operation performed on test_mongo.py",
+          "evidence": [
+            {
+              "source_tool": "read_file",
+              "tool_call_id": null,
+              "file_path": "test_mongo.py",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": ""
+            }
+          ],
+          "confidence": 100.0,
+          "category": "API_DATA",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null,
+        "evidence_count": 1
+      },
+      {
+        "finding_title": "Read backend/optimizer.py",
+        "agent_type": "API_DATA",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Batch review mismatch",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Read backend/optimizer.py",
+          "description": "File read operation performed on backend/optimizer.py",
+          "evidence": [
+            {
+              "source_tool": "read_file",
+              "tool_call_id": null,
+              "file_path": "backend/optimizer.py",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "",
+              "relevance": ""
+            }
+          ],
+          "confidence": 100.0,
+          "category": "API_DATA",
+          "review_status": null,
+          "reviewer_note": null
+        },
+        "revised_finding": null,
+        "evidence_count": 1
+      },
+      {
+        "finding_title": "Startup Command",
+        "agent_type": "SETUP",
+        "verdict": "UNCERTAIN",
+        "confidence": 0.0,
+        "reason": "Batch review mismatch",
+        "revision_requested": false,
+        "revision_completed": false,
+        "original_finding": {
+          "title": "Startup Command",
+          "description": "The startup command is determined by the entry_points section in the Analysis Summary.",
+          "evidence": [
+            {
+              "source_tool": "Analysis Summary",
+              "tool_call_id": null,
+              "file_path": "backend/app.py",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "Python application instance defined at line 10",
+              "relevance": ">= 0.5"
+            },
+            {
+              "source_tool": "Analysis Summary",
+              "tool_call_id": null,
+              "file_path": "backend/app.py",
+              "line_numbers": null,
+              "symbol": null,
+              "content": "Flask application instance defined at line 95",
+              "relevance": "> 0.5"
+            }
+          ],
+          "confidence": 0.8,
+          "category": "startup_command",
+          "review_status": "incomplete",
+          "reviewer_note": null
+        },
+        "revised_finding": null,
+        "evidence_count": 2
+      }
+    ],
+    "total_approved": 0,
+    "total_rejected": 0,
+    "total_uncertain": 17,
+    "overall_confidence": 0.0,
+    "revision_count": 0,
+    "reviewed_at": "2026-08-03T16:42:49.367653Z",
+    "contradictions": [],
+    "recommendations": []
+  },
+  "onboarding_guide": null,
+  "errors": [
+    "name 'ReviewVerdict' is not defined"
+  ]
+}

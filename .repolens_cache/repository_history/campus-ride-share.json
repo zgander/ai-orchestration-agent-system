@@ -1,0 +1,23 @@
+{
+  "name": "campus-ride-share",
+  "url": "https://github.com/gitarmaan/campus-ride-share",
+  "source_type": "GITHUB",
+  "root_path": "C:\\Users\\MOHAMM~1\\AppData\\Local\\Temp\\repolens_d3w1wmhp",
+  "tech_stack_summary": {
+    "languages": [
+      "Python",
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "frameworks": [
+      "React"
+    ],
+    "databases": []
+  },
+  "analysed_at": "2026-08-03T16:28:23.945971Z",
+  "last_accessed_at": "2026-08-03T16:28:23.947937Z",
+  "investigation_status": "NOT_STARTED",
+  "pinned": false,
+  "size_bytes": 939609
+}

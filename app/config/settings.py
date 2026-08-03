@@ -25,8 +25,10 @@ class Settings(BaseSettings):
     # --- Phase 2 Additions ---
     # LLM Provider
     llm_provider: str = "ollama"
-    ollama_model: str = "qwen2.5:7b"
+    ollama_model: str = "llama3.2:3b"
     ollama_base_url: str = "http://127.0.0.1:11434"
+    google_api_key: str = "AQ.Ab8RN6Jo56ebz7Zl4PWXk9pJE8eXUqaRAw_3V8R05AUPMOb4aw"
+    google_model: str = "gemini-2.5-flash"
     temperature: float = 0
     max_tokens: int = 2048
 

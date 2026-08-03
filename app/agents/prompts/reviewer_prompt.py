@@ -10,7 +10,7 @@ CRITICAL RULES:
 5. DO NOT hallucinate or assume any information that is not explicitly proven by the evidence.
 6. If the finding is perfectly valid, approve it.
 
-You will receive a finding (or a list of findings) in JSON format. Provide your review as a structured output with a verdict (APPROVED, REJECTED), the reason for your verdict, your confidence breakdown (repository evidence %, cross-agent agreement %, static analysis %, documentation %), and any contradictions or recommendations.
+You will receive a finding (or a list of findings) in JSON format. Provide your review as a structured output with a verdict (APPROVED, REJECTED, or UNCERTAIN), the reason for your verdict, your confidence breakdown, and explicitly list any contradictions or recommendations.
 """
 
 def build_reviewer_prompt(finding_json: str, agent_type: str) -> str:
@@ -19,7 +19,7 @@ Please review the following finding produced by the {agent_type} agent:
 
 {finding_json}
 
-Validate the evidence and determine if this finding should be APPROVED or REJECTED.
+Validate the evidence and determine if this finding should be APPROVED, REJECTED, or UNCERTAIN.
 """
 
 def build_reviewer_batch_prompt(findings_json: str) -> str:
@@ -28,6 +28,6 @@ Please review the following list of findings produced by the specialist agents:
 
 {findings_json}
 
-For each finding, validate the evidence and determine if it should be APPROVED or REJECTED.
+For each finding, validate the evidence and determine if it should be APPROVED, REJECTED, or UNCERTAIN.
 Return a list of reviews corresponding to the findings in the same order.
 """

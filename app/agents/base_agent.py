@@ -75,7 +75,7 @@ class BaseAgent(ABC):
                 tool_calls_record.append(ToolResult(
                     tool_name=action.tool,
                     input_args=action.tool_input if isinstance(action.tool_input, dict) else {"input": str(action.tool_input)},
-                    output=str(observation)[:500] + ("..." if len(str(observation)) > 500 else ""),
+                    output=str(observation)[:2000] + ("..." if len(str(observation)) > 2000 else ""),
                     success=True,
                     duration_seconds=0.0
                 ))
@@ -92,13 +92,16 @@ class BaseAgent(ABC):
                 try:
                     logger.info(f"Extracting structured JSON from {self.agent_type.value} output...")
                     structured_llm = self.llm.with_structured_output(FindingsOutput)
+                    
+                    tool_calls_dump = "\n\n".join([f"Tool Call [{i}]: {t.tool_name}({json.dumps(t.input_args)})\nOutput: {t.output}" for i, t in enumerate(tool_calls_record)])
+                    
                     extraction_prompt = ChatPromptTemplate.from_messages([
-                        ("system", "Extract all findings from the provided text into the structured JSON format. CRITICAL: For each finding, you MUST extract the 'evidence' section into the nested 'evidence' array field. Each evidence item must map to the Evidence schema (source_tool, file_path, content, relevance). If no findings are present, return an empty list."),
+                        ("system", "Extract all findings from the provided text into the structured JSON format. CRITICAL: For each finding, you MUST extract the 'evidence' section into the nested 'evidence' array field. Each evidence item must map to the Evidence schema (source_tool, file_path, content, relevance). Use the actual tool outputs provided below to ground your evidence (e.g. use the exact file_path and content).\n\nTool Call Records:\n{tool_calls}"),
                         ("human", "{text}")
                     ])
                     extractor = extraction_prompt | structured_llm
                     
-                    extracted = extractor.invoke({"text": final_output})
+                    extracted = extractor.invoke({"text": final_output, "tool_calls": tool_calls_dump})
                     
                     if extracted and extracted.findings:
                         for f in extracted.findings:

@@ -19,10 +19,14 @@ class ResponseFormatter:
         # Replace inline citation markers [0], [1] with display text if needed
         # Or just pass the raw_answer and let the UI handle [0] -> Citation linking
         
+        confidence = max([f.relevance_score for f in fragments]) if fragments else 0.2
+        if "don't have enough information" in raw_answer.lower():
+            confidence = min(0.1, confidence)
+
         return ChatResponse(
             answer=raw_answer,
             citations=citations,
             retrieved_sections=retrieved_sections,
-            confidence=1.0,
+            confidence=confidence,
             required_reinvestigation=required_reinvestigation
         )

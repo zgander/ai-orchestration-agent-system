@@ -1,0 +1,18 @@
+{
+  "session_id": "00fa2daf-343d-4625-8233-6d68af449738",
+  "repository_name": "campus-ride-share",
+  "messages": [
+    {
+      "role": "user",
+      "content": "can you explain what this project does?",
+      "citations": []
+    },
+    {
+      "role": "assistant",
+      "content": "I don't have enough information about that.",
+      "citations": []
+    }
+  ],
+  "created_at": "2026-08-03T15:47:29.747546Z",
+  "updated_at": "2026-08-03T15:47:51.809717Z"
+}

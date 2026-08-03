@@ -15,9 +15,16 @@ class KnowledgeRetriever:
                  investigation_result: InvestigationResult) -> List[KnowledgeFragment]:
         fragments = []
         
-        # 1. Onboarding Section Match (Highest priority)
+        # ALWAYS include base context
         if investigation_result.onboarding_guide:
             guide = investigation_result.onboarding_guide
+            fragments.append(KnowledgeFragment(
+                source_type=CitationType.SECTION,
+                content=f"Repository Overview: {guide.repository_overview.description}\nMental Model: {guide.mental_model}",
+                relevance_score=0.8,
+                section_name="Overview"
+            ))
+            
             if classification.category == QueryCategory.ARCHITECTURE:
                 fragments.append(KnowledgeFragment(
                     source_type=CitationType.SECTION,
@@ -69,15 +76,26 @@ class KnowledgeRetriever:
                     evidence=[e.content for e in guide.setup_guide.evidence] if guide.setup_guide.evidence else None
                 ))
             elif classification.category == QueryCategory.GENERAL:
-                fragments.append(KnowledgeFragment(
-                    source_type=CitationType.SECTION,
-                    content=f"Repository Overview: {guide.repository_overview.description}\nMental Model: {guide.mental_model}",
-                    relevance_score=0.8,
-                    section_name="Overview"
-                ))
+                if guide.ai_insights:
+                    fragments.append(KnowledgeFragment(
+                        source_type=CitationType.SECTION,
+                        content=f"AI Insights:\n" + "\n".join(f"- {i}" for i in guide.ai_insights),
+                        relevance_score=0.85,
+                        section_name="AI Insights"
+                    ))
+        else:
+            # Fallback if no onboarding guide
+            tech_stack = ", ".join(l.name for l in analysis_result.tech_stack.languages)
+            fragments.append(KnowledgeFragment(
+                source_type=CitationType.SECTION,
+                content=f"Repository {analysis_result.repository_info.name} is a software project using {tech_stack}.",
+                relevance_score=0.8,
+                section_name="Overview (Fallback)"
+            ))
                 
         # 2. Agent Findings Search
         query_terms = [t.lower() for t in classification.sub_topics] + [word.lower() for word in query.split() if len(word) > 3]
+        query_terms = list(set(query_terms)) # deduplicate
         
         for agent_type, report in investigation_result.agent_reports.items():
             if report.findings:

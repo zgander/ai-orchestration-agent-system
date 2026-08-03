@@ -44,8 +44,7 @@ def get_repository_service():
 @st.cache_resource
 def get_chat_service():
     from app.utils.llm_factory import LLMFactory
-    chat_settings = settings.model_copy(update={'ollama_model': 'gpt-oss:120b-cloud'})
-    return ChatService(LLMFactory.get_llm(chat_settings), chat_settings)
+    return ChatService(LLMFactory.get_llm(settings), settings)
 
 def load_css():
     css_path = Path(__file__).parent / "styles" / "custom.css"

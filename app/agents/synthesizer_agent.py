@@ -189,14 +189,23 @@ class SynthesizerAgent:
         analysis_result: AnalysisResult,
         role: OnboardingRole
     ) -> OnboardingGuide:
-        logger.info(f"Synthesizer generating onboarding guide for {role.value}")
+        logger.info(f"Synthesizing onboarding guide for role: {role.value}")
         
-        # Format findings for prompt
+        # Collect evidence by agent type to propagate to sections
+        evidence_by_agent = {
+            AgentType.ARCHITECTURE: [],
+            AgentType.EXECUTION_FLOW: [],
+            AgentType.API_DATA: [],
+            AgentType.SETUP: []
+        }
+        
         findings_text = ""
-        for agent_type, findings in approved_findings.items():
-            findings_text += f"\n--- {agent_type.value} ---\n"
-            for f in findings:
-                findings_text += f"Title: {f.title}\nDescription: {f.description}\n\n"
+        for review in review_report.reviews:
+            if review.verdict == ReviewVerdict.APPROVED:
+                f = review.original_finding
+                findings_text += f"\n- [{f.category}] {f.title}: {f.description}"
+                if review.agent_type in evidence_by_agent:
+                    evidence_by_agent[review.agent_type].extend(f.evidence)
 
         from concurrent.futures import ThreadPoolExecutor
         
@@ -334,7 +343,7 @@ class SynthesizerAgent:
                     purpose=entry.purpose,
                     importance=entry.importance,
                     read_first=entry.read_first,
-                    evidence=[]
+                    evidence=evidence_by_agent[AgentType.ARCHITECTURE]
                 ))
 
         important_files = []
@@ -346,7 +355,7 @@ class SynthesizerAgent:
                     purpose=entry.purpose,
                     why_it_matters=entry.why_it_matters,
                     dependencies=[],
-                    evidence=[]
+                    evidence=evidence_by_agent[AgentType.ARCHITECTURE]
                 ))
 
         # 4. Execution Flows
@@ -356,7 +365,7 @@ class SynthesizerAgent:
                 execution_flows.append(ExecutionFlow(
                     name=flow.name,
                     steps=[{"step": s.step, "detail": s.detail} for s in flow.steps],
-                    evidence=[],
+                    evidence=evidence_by_agent[AgentType.EXECUTION_FLOW],
                     confidence=flow.confidence,
                     supporting_files=flow.supporting_files,
                     flow_type=flow.flow_type
@@ -382,7 +391,7 @@ class SynthesizerAgent:
                 purpose=f"Endpoint handled by {api.handler_name}",
                 handler_file=api.file_path,
                 handler_function=api.handler_name,
-                evidence=[]
+                evidence=evidence_by_agent[AgentType.API_DATA]
             ))
 
         # 6. Reading Order
@@ -406,7 +415,7 @@ class SynthesizerAgent:
                 environment_variables=[{"name": v} for v in setup_data.setup.environment_variables],
                 run_commands=[{"command": c} for c in setup_data.setup.run_commands],
                 testing_commands=setup_data.setup.testing_commands,
-                evidence=[]
+                evidence=evidence_by_agent[AgentType.SETUP]
             )
 
         # 8. Documentation Gaps

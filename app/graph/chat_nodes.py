@@ -98,7 +98,13 @@ class ChatWorkflowNodes:
         if not fragments_str:
             fragments_str = "No relevant knowledge found."
             
-        condensed_overview = build_condensed_context(state["analysis_result_json"], AgentType.ARCHITECTURE)
+        investigation = InvestigationResult.model_validate_json(state["investigation_result_json"])
+        if investigation.onboarding_guide:
+            condensed_overview = f"Project Purpose: {investigation.onboarding_guide.repository_overview.description}\n"
+            condensed_overview += f"Languages: {', '.join(investigation.onboarding_guide.repository_overview.languages)}\n"
+            condensed_overview += f"Architecture: {investigation.onboarding_guide.repository_overview.architecture_style}"
+        else:
+            condensed_overview = build_condensed_context(state["analysis_result_json"], AgentType.ARCHITECTURE)
 
         raw_answer = self.chat_agent.generate_response(
             repository_name=state["repository_name"],

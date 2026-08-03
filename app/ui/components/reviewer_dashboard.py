@@ -52,8 +52,9 @@ def render_reviewer_dashboard(review_report: ReviewReport):
             "Finding": review.finding_title,
             "Produced By": review.agent_type.value,
             "Evidence Count": getattr(review, 'evidence_count', len(review.original_finding.evidence)),
-            "Confidence": f"{review.confidence:.1%}",
-            "Status": "Verified" if review.verdict == ReviewVerdict.APPROVED else "Needs Review"
+            "Reviewer Confidence": f"{review.confidence:.1%}",
+            "Agent Confidence": f"{review.original_finding.confidence:.1%}",
+            "Status": "Verified" if review.verdict == ReviewVerdict.APPROVED else ("Needs Review (Rejected)" if review.verdict == ReviewVerdict.REJECTED else "Uncertain")
         })
         
     st.dataframe(pd.DataFrame(matrix_data), use_container_width=True)
